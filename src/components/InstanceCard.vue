@@ -65,6 +65,10 @@ export default {
   data: (obj) => {
     let chips = []
 
+    if(obj.instance.raw) {
+      chips.push("live visualization")
+    }
+
     return {
       chips: chips,
       isFavorite: UserService.isFavorite(obj.instance),

@@ -9,7 +9,7 @@ const routes = [
     component: HomeView
   },
   {
-    path: '/instances',
+    path: '/instances/:problem',
     name: 'instances',
     component: () => import('../views/InstancesView.vue')
   },

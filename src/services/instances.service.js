@@ -21,7 +21,7 @@ class InstancesService {
     }
 
     getInstance(id) {
-        return axios.get(this.baseUrl() + "instances/" + id)
+        return axios.get(this.baseUrl() + "instance/" + id)
     }
 
     getInstanceRaw(id) {

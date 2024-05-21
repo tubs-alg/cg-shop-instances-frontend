@@ -15,12 +15,7 @@
             </div>
             <br>
             <v-btn rounded variant="outlined">Learn More</v-btn>
-            <router-link :to="{name: 'instances'}">
-              <v-btn rounded variant="outlined" color="white" class="ms-3">
-                <v-icon class="me-2">mdi-magnify</v-icon>
-                Start exploring
-              </v-btn>
-            </router-link>
+
           </v-col>
           <v-col lg="4">
             <v-img :src="require('@/assets/hero.png')" max-height="400"></v-img>

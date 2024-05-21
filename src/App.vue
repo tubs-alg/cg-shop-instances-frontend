@@ -1,6 +1,7 @@
 <script setup>
 import {computed} from 'vue'
 import {useRouter} from "vue-router";
+import Problems from "@/data/problems";
 
 const router = useRouter();
 
@@ -30,11 +31,35 @@ const showFooter = computed(() => {
 
       <v-spacer></v-spacer>
 
-      <router-link to="/instances" class="text-decoration-none ms-3">
-        <v-btn icon :color="transparentAppBar?'white' : 'black'">
-          <v-icon>mdi-search-web</v-icon>
-        </v-btn>
-      </router-link>
+      <v-menu
+          open-on-hover
+      >
+        <template v-slot:activator="{ props }">
+          <v-btn
+              :color="transparentAppBar?'white' : 'black'"
+              v-bind="props"
+          >
+            <v-icon class="me-2">mdi-search-web</v-icon>
+            Problems
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+              v-for="key in Object.keys(Problems)"
+              :key="key"
+          >
+            <router-link :to="{
+              name: 'instances',
+              params: {
+                problem: Problems[key].id
+              }
+            }" class="text-decoration-none text-black">
+            <v-list-item-title>{{ Problems[key].name }}</v-list-item-title>
+            </router-link>
+          </v-list-item>
+        </v-list>
+      </v-menu>
 
       <router-link to="/favorites" class="text-decoration-none me-3">
         <v-btn icon :color="transparentAppBar?'white' : 'black'">

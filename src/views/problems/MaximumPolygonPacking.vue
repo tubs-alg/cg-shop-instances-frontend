@@ -1,5 +1,4 @@
 <script setup>
-import MaximumPolygonPacking from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
 import MathFormula from "@/components/math/MathFormula.vue";
 
 </script>
@@ -104,20 +103,8 @@ import MathFormula from "@/components/math/MathFormula.vue";
       pp. 1014-1021, doi: 10.1109/FOCS46700.2020.00098.
     </p>
 
-
-    <MaximumPolygonPacking/>
-
   </v-container>
 </template>
-
-<script>
-
-export default {
-  name: "MaximumPolygonPacking",
-  mounted() {
-  }
-}
-</script>
 
 <style scoped>
 

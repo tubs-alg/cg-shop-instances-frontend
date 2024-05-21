@@ -4,19 +4,6 @@ import Problems from "@/data/problems";
 <template>
   <div class="search-area">
     <div class="gradient">
-      <v-container>
-        <v-tabs
-            v-model="problem"
-            align-tabs="center"
-        >
-          <v-tab :value="prob.id"
-                 v-for="prob in problems"
-                 :key="prob.id">
-            {{ prob.name }}
-          </v-tab>
-        </v-tabs>
-
-      </v-container>
       <v-skeleton-loader v-if="currentlyUpdatingFilters" :elevation="6" type="card" max-width="800" class="mx-auto"
                          color="transparent"></v-skeleton-loader>
       <v-card v-if="!currentlyUpdatingFilters" elevation="0" max-width="800" class="mx-auto" color="transparent">
@@ -126,7 +113,7 @@ export default {
         return Problems[key];
       }),
       "search": "",
-      "problem": Problems.MaximumPolygonPacking.id,
+      "problem": this.$route.params.problem,
       "problemData": {},
       "instances": [],
       "sortOptions": ["-uid", "uid", "-size", "size"],

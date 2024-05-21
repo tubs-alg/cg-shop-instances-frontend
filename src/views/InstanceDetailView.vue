@@ -14,7 +14,7 @@
       <v-icon icon="mdi-heart" color="red" size="32" v-if="isFavorite"></v-icon>
     </h1>
 
-    <v-row>
+    <v-row align="center">
       <v-col lg="6">
         <v-table class="text-caption">
           <thead>
@@ -24,7 +24,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="meta in instance.meta" :key="meta.key">
+          <tr v-for="meta in metaTable" :key="meta.key">
             <td>{{ meta.key }}</td>
             <td>{{ meta.value }}</td>
           </tr>
@@ -36,7 +36,9 @@
           </v-chip>
         </a>
 
-        <v-chip prepend-icon="mdi-eye" label class="ms-3" @click="liveVisualization = !liveVisualization">
+        <v-chip prepend-icon="mdi-eye" label class="ms-3"
+                v-if="!liveVisualization"
+                @click="liveVisualization = !liveVisualization">
           Live Visualization
         </v-chip>
 
@@ -53,7 +55,7 @@
 
     <MaximumPolygonPackingVisualization
         :instance="instance"
-        v-if="problem === Problems.MaximumPolygonPacking.id && liveVisualization"/>
+        v-if="isMaximumPolygonPacking && liveVisualization"/>
   </v-container>
 
 
@@ -68,8 +70,17 @@ import Problems from "@/data/problems";
 export default {
   name: 'InstanceDetailView',
   computed: {
-    Problems() {
-      return Problems
+    isMaximumPolygonPacking() {
+      return this.problem === Problems.MaximumPolygonPacking.id
+    },
+    metaTable() {
+      let problemName = this.isMaximumPolygonPacking? Problems.MaximumPolygonPacking.name : "unknown";
+
+      return [
+        {key: 'Problem', value: problemName},
+        {key: 'Name', value: this.instance.uid},
+        {key: '#items', value: this.instance.num_items},
+      ]
     }
   },
   components: {MaximumPolygonPackingVisualization},
