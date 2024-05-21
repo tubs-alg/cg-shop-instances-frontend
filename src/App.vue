@@ -24,7 +24,7 @@ const showFooter = computed(() => {
       <v-img class="ms-5" :src="require('@/assets/connections.png')" max-width="32" v-if="showLogo"></v-img>
       <v-app-bar-title class="ms-5" v-if="showLogo">
         <router-link to="/" :class="showLogo && transparentAppBar? 'text-white text-decoration-none' : 'text-black text-decoration-none'">
-          Benchmark Instances Project
+          CG:SHOP Instances Collection
         </router-link>
       </v-app-bar-title>
 
@@ -48,7 +48,7 @@ const showFooter = computed(() => {
       <router-view/>
 
       <v-footer class="d-flex justify-space-between" color="grey" v-if="showFooter">
-        <span>&copy; 2021 Benchmark Instances Project</span>
+        <span>&copy; 2021 CG:SHOP Instances Collection</span>
         <small>Vector graphics made by freepik and pch.vector <a href="https://de.freepik.com/" class="text-decoration-none text-white">Freepik</a></small>
       </v-footer>
     </v-main>

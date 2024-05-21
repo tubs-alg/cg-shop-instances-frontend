@@ -1,6 +1,6 @@
 # CG:SHOP Instances Project Frontend
 
-Frontend for the benchmark instances project. 
+Frontend for the CG:SHOP Instances Collection. 
 Will run in conjunction with an backend API server.
 
 ## Project setup

@@ -4,9 +4,9 @@
       <v-container>
         <v-row>
           <v-col lg="8">
-            <h1 class="title font-weight-light">Benchmark Instances Project</h1>
+            <h1 class="title font-weight-light">CG:SHOP Instances Collection</h1>
             <div>
-              Welcome to the Benchmark Instances Project, where scientific progress meets practicality. We curate a
+              Welcome to the CG:SHOP Instances Collection, where scientific progress meets practicality. We curate a
               diverse
               range of high-quality, challenging optimization problem instances, empowering researchers with the tools
               they
@@ -35,26 +35,15 @@
     <v-container>
       <v-row>
         <v-col lg="4">
-          <ProblemCard link="/jssp" title="Scheduling Problems"
-                       description="The Job Shop Scheduling Problem (JSSP) is a well-known
-                                    combinatorial optimization problem. It is a class of
-                                    scheduling problems with the objective of minimizing the makespan.
-                                    The problem is NP-hard and has been widely
-                                    studied in the operations research community."/>
+          <ProblemCard link="/mpp" title="Maximum Polygon Packing"
+                       description="Optimal packing problems have an extensive history in Computational Geometry.
+                       They are also relevant in many practical contexts."/>
         </v-col>
         <v-col lg="4">
-          <ProblemCard link="/configuration_sampling" title="Configuration Sampling"
-                       description="Configurable systems allow users to derive customized software
-                                    variants with behavior and functionalities tailored to individual
-                                    needs. Software testing becomes highly relevant, but also highly expensive due to
-                                    large configuration spaces that grow exponentially in the number
-                                    of features."/>
+
         </v-col>
         <v-col lg="4">
-          <ProblemCard link="/knapsack" title="Knapsack"
-                       description="The Knapsack Problem is a classic optimization problem that
-                                    seeks to maximize the total value of items placed into a knapsack
-                                    without exceeding its capacity."/>
+
         </v-col>
 
       </v-row>
@@ -101,7 +90,7 @@
             Our goal
           </h2>
           <div>
-            The Benchmark Instances Project (BIP) is a library of sample instances for geometric problems from various
+            The CG:SHOP Instances Collection (BIP) is a library of sample instances for geometric problems from various
             sources and
             of various types.
             The main goal is to facilitate and encourage practical work on a wide range of geometric optimization

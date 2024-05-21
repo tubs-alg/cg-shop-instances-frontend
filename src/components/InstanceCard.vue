@@ -17,17 +17,17 @@
 
 
     <v-card-title>
-      {{ instance.identifier }}
+      {{ instance.uid }}
     </v-card-title>
 
     <v-card-subtitle>
-      {{ problem.displayName }}
+      Size: {{ instance.num_items }}
     </v-card-subtitle>
 
     <v-card-actions>
       <router-link :to="{name: 'instance_detail', params: {
-          identifier: instance.identifier,
-          problem: problem.identifier
+          identifier: instance.uid,
+          problem: problem
         }}">
         <v-btn icon="mdi-eye"></v-btn>
       </router-link>
@@ -55,38 +55,18 @@ export default {
   name: "InstanceCard",
   props: {
     instance: Object,
-    problems: Array,
-    filters: Array
+    problem: String
   },
   computed: {
     favoriteClass() {
       return this.isFavorite ? (this.animate ? "heart animate" : "heart favorite") : "heart"
-    },
-    currentUser() {
-      return this.$store.state.auth.user;
     }
   },
   data: (obj) => {
     let chips = []
-    obj.filters.forEach((input) => {
-      let meta = obj.instance.meta.find((meta) => meta.key === input.key)
-
-      if (meta) {
-        if (input.type === "int") {
-          chips.push(meta.value + " " + input.displayName)
-        } else if (input.type === "choices") {
-          chips.push(meta.value)
-        } else if (input.type === "boolean") {
-          chips.push((meta.value === "False"? '¬': '' )+ input.displayName)
-        }
-
-      }
-    })
-
 
     return {
       chips: chips,
-      problem: obj.problems.find(problem => problem.identifier === obj.instance.problem),
       isFavorite: UserService.isFavorite(obj.instance),
       animate: false
     }

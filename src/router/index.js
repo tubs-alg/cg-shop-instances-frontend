@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import {mathjax} from "mathjax/es5/tex-mml-chtml.js"
 
 const routes = [
   {
@@ -23,36 +24,10 @@ const routes = [
     component: () => import('../views/FavoritesView.vue')
   },
   {
-    path: '/jssp',
-    name: 'jssp',
-    component: () => import('../views/problems/JobShopSchedulingProblem.vue')
-  },
-  {
-    path: '/configuration_sampling',
-    name: 'configuration_sampling',
-    component: () => import('../views/problems/ConfigurationSamplingProblem.vue')
-  },
-  {
-    path: '/knapsack',
-    name: 'knapsack',
-    component: () => import('../views/problems/KnapsackProblem.vue')
-  },
-  /*
-  {
-    path: '/profile',
-    name: 'profile',
-    component: () => import('../views/ProfileView.vue')
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('../views/LoginView.vue')
-  },
-  {
-    path: '/packages',
-    name: 'packages',
-    component: () => import('../views/InstancesPackages.vue')
-  }*/
+    path: '/mpp',
+    name: 'mpp',
+    component: () => import('../views/problems/MaximumPolygonPacking.vue')
+  }
 ]
 
 const router = createRouter({

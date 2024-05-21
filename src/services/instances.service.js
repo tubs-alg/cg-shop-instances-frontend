@@ -1,29 +1,46 @@
 import axios from 'axios';
+import Problems from "@/data/problems";
+
 
 class InstancesService {
-    getFilters(problem) {
-        return axios.get(process.env.VUE_APP_API_URL + "instances/filters/" + problem)
+
+    constructor(problem) {
+        this.problem = problem
     }
 
-    getProblems() {
-        return axios.get(process.env.VUE_APP_API_URL + "problems")
-    }
-
-    getInstance(problem, identifier) {
-        return axios.get(process.env.VUE_APP_API_URL + "instances/get/" + problem + "/" + identifier)
-    }
-
-    getInstances(problem, search, filters, page) {
-        let params = {
-            identifier: search,
-            page: page
+    baseUrl() {
+        if (this.problem === Problems.MaximumPolygonPacking.id) {
+            return process.env.VUE_APP_API_URL + Problems.MaximumPolygonPacking.endpoint
         }
 
-        filters.forEach((filter) => {
-            params[filter.key] = filter.value
+        return process.env.VUE_APP_API_URL;
+    }
+
+    getProblem() {
+        return axios.get(this.baseUrl() + "problem")
+    }
+
+    getInstance(id) {
+        return axios.get(this.baseUrl() + "instances/" + id)
+    }
+
+    getInstanceRaw(id) {
+        return axios.get(this.baseUrl() + "instance/" + id + "/raw")
+    }
+
+    getInstances(search, filters, paginationData) {
+        let params = {
+            search: search,
+            limit: paginationData.limit,
+            offset: paginationData.offset,
+            sort: paginationData.sort
+        }
+
+        Object.keys(filters).forEach((key) => {
+            params[key] = filters[key]
         });
 
-        return axios.get(process.env.VUE_APP_API_URL + "instances/get/" + problem, {
+        return axios.get(this.baseUrl() + "instances", {
             params: params,
             paramsSerializer: {
                 indexes: null, // no brackets at all
@@ -32,4 +49,4 @@ class InstancesService {
     }
 }
 
-export default new InstancesService();
+export default InstancesService;

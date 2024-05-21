@@ -10,7 +10,7 @@
   <v-container class="text-center" v-if="instance">
     <v-btn icon="mdi-chevron-left" @click="getBack" class="float-left"></v-btn>
     <h1>
-      {{ instance.identifier }}
+      {{ instance.uid }}
       <v-icon icon="mdi-heart" color="red" size="32" v-if="isFavorite"></v-icon>
     </h1>
 
@@ -30,16 +30,30 @@
           </tr>
           </tbody>
         </v-table>
-        <a :href="instance.file" download="download" target="_blank">
+        <a :href="buildUrl(instance.path)" download="download" target="_blank">
           <v-chip prepend-icon="mdi-download" label>
             Download
           </v-chip>
         </a>
+
+        <v-chip prepend-icon="mdi-eye" label class="ms-3" @click="liveVisualization = !liveVisualization">
+          Live Visualization
+        </v-chip>
+
       </v-col>
       <v-col lg="6">
-        <vue-image-zoomer :regular="instance.preview_detail" click-zoom/>
+        <vue-image-zoomer :regular="instance.image" click-zoom v-if="instance.image"/>
+        <div v-if="instance.image === null">
+          <v-alert type="warning">
+            No static visualization available
+          </v-alert>
+        </div>
       </v-col>
     </v-row>
+
+    <MaximumPolygonPackingVisualization
+        :instance="instance"
+        v-if="problem === Problems.MaximumPolygonPacking.id && liveVisualization"/>
   </v-container>
 
 
@@ -48,24 +62,46 @@
 <script>
 import InstancesService from "@/services/instances.service";
 import UserService from "@/services/user.service";
+import MaximumPolygonPackingVisualization from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
+import Problems from "@/data/problems";
 
 export default {
   name: 'InstanceDetailView',
+  computed: {
+    Problems() {
+      return Problems
+    }
+  },
+  components: {MaximumPolygonPackingVisualization},
   data: function () {
     return {
-      identifier: this.$route.params.identifier,
+      uid: this.$route.params.identifier,
       problem: this.$route.params.problem,
       isFavorite: false,
-      instance: null
+      instance: null,
+      liveVisualization: false
     }
   },
   mounted() {
-    InstancesService.getInstance(this.problem, this.identifier).then((response) => {
+    (new InstancesService(this.problem)).getInstance(this.uid).then((response) => {
+      console.log(response.data)
       this.instance = response.data
       this.isFavorite = UserService.isFavorite(this.instance)
+    }).catch((error) => {
+      console.error(error)
     });
   },
   methods: {
+    buildUrl(path) {
+      if (path === null) {
+        return null
+      }
+
+      if (path.startsWith('/')) {
+        path = path.substring(1)
+      }
+      return process.env.VUE_APP_API_URL + path
+    },
     getBack() {
       this.$router.go(-1);
     }
