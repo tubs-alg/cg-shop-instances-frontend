@@ -8,12 +8,11 @@
     <v-progress-circular
         indeterminate
         color="primary"
-        v-if="instanceData === null"
+        v-if="data === null"
     ></v-progress-circular>
+    <div :id="sceneId"></div>
 
-    <div id="scene"></div>
-
-    <div v-if="instanceData !==null" class="text-center mt-1 text-sm-caption">
+    <div v-if="data !==null" class="text-center mt-1 text-sm-caption">
       Controls: Mouse wheel to zoom, Mouse click to pan
     </div>
   </v-container>
@@ -24,23 +23,33 @@
 <script>
 import * as THREE from 'three';
 import {OrbitControls} from "three/addons";
-import InstancesService from "@/services/instances.service";
-import Problems from "@/data/problems";
+import axios from "axios";
 
 export default {
   name: "MaximumPolygonPackingVisualization",
   props: {
-    instance: Object
+    url: String,
+    solutionUrl: String
   },
   data() {
     return {
-      instanceData: null
+      data: null,
+      sceneId: this.$.uid + '-scene'
     }
   },
   mounted() {
-    (new InstancesService(Problems.MaximumPolygonPacking.id)).getInstanceRaw(this.instance.uid).then((response) => {
-      this.instanceData = response.data
-      this.initializeScene();
+    axios.get(this.url).then((response) => {
+      this.data = response.data
+      if (this.solutionUrl) {
+        axios.get(this.solutionUrl).then((response) => {
+          this.data.solution = response.data
+          this.initializeScene();
+        }).catch((error) => {
+          console.error(error)
+        });
+      } else {
+        this.initializeScene();
+      }
     }).catch((error) => {
       console.error(error)
     });
@@ -115,7 +124,7 @@ export default {
       })
     },
     initializeScene() {
-      const width = document.getElementById("scene").offsetWidth;
+      const width = document.getElementById(this.sceneId).offsetWidth;
       const height = 500;
       const aspectRatio = width / height;
 
@@ -127,7 +136,7 @@ export default {
       const renderer = new THREE.WebGLRenderer({antialias: true});
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setSize(width, height);
-      document.getElementById("scene").appendChild(renderer.domElement);
+      document.getElementById(this.sceneId).appendChild(renderer.domElement);
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableRotate = false;
@@ -137,10 +146,10 @@ export default {
         RIGHT: THREE.MOUSE.PAN
       }
 
-      let container = this.coordinatesFromJson(this.instanceData.container);
+      let container = this.coordinatesFromJson(this.data.container);
 
-      let containerWidth = Math.max(...this.instanceData.container.x);
-      let containerHeight = Math.max(...this.instanceData.container.y);
+      let containerWidth = Math.max(...this.data.container.x);
+      let containerHeight = Math.max(...this.data.container.y);
 
       let allObjects = new THREE.Group();
 
@@ -151,34 +160,49 @@ export default {
       let currentRowWidth = 0;
       let desiredWidth = aspectRatio * containerWidth * 2;
 
-      this.instanceData.items.forEach((item, i) => {
+      if (this.data.solution) {
+        this.data.solution.packing.item_indices.forEach((itemIdx, i) => {
+          let item = this.data.items[itemIdx];
+          let xTranslation = this.data.solution.packing.x_translations[i];
+          let yTranslation = this.data.solution.packing.y_translations[i];
 
-        let itemWidth = Math.max(...item.x)
-        let itemHeight = Math.max(...item.y)
+          let coordinates = this.coordinatesFromJson(item);
+          coordinates = this.shiftCoordinates(coordinates, xTranslation, yTranslation);
 
-        if (currentRowWidth + itemWidth > desiredWidth) {
-          currentRowWidth = 0;
-          totalRowHeight += currentRowHeight;
-          currentRowHeight = 0;
-        }
+          allObjects.add(this.polygonFromCoordinates(coordinates, itemColors[i % itemColors.length]))
+        });
+      } else {
+        this.data.items.forEach((item, i) => {
 
-        currentRowWidth += 0.005 * containerWidth;
+          let itemWidth = Math.max(...item.x)
+          let itemHeight = Math.max(...item.y)
 
-        let coordinates = this.coordinatesFromJson(item);
+          if (currentRowWidth + itemWidth > desiredWidth) {
+            currentRowWidth = 0;
+            totalRowHeight += currentRowHeight;
+            currentRowHeight = 0;
+          }
 
-        coordinates = this.shiftCoordinates(coordinates,
-            1.05 * containerWidth + currentRowWidth,
-            totalRowHeight + 0.005 * containerWidth
-        )
+          currentRowWidth += 0.005 * containerWidth;
 
-        currentRowWidth += itemWidth
-        currentRowHeight = Math.max(currentRowHeight, itemHeight)
+          let coordinates = this.coordinatesFromJson(item);
 
-        allObjects.add(this.polygonFromCoordinates(coordinates, itemColors[i % itemColors.length]))
+          coordinates = this.shiftCoordinates(coordinates,
+              1.05 * containerWidth + currentRowWidth,
+              totalRowHeight + 0.005 * containerWidth
+          )
 
-      })
+          currentRowWidth += itemWidth
+          currentRowHeight = Math.max(currentRowHeight, itemHeight)
 
-      container = this.shiftCoordinates(container, 0, (totalRowHeight / 2) - (containerHeight / 2))
+          allObjects.add(this.polygonFromCoordinates(coordinates, itemColors[i % itemColors.length]))
+
+        })
+
+        container = this.shiftCoordinates(container, 0, (totalRowHeight / 2) - (containerHeight / 2))
+
+      }
+
 
       allObjects.add(this.polygonBoundaryFromCoordinates(container, "#000000"));
 

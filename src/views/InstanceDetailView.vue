@@ -7,57 +7,143 @@
     ></v-progress-circular>
   </v-container>
 
-  <v-container class="text-center" v-if="instance">
+
+  <v-container v-if="instance">
+
     <v-btn icon="mdi-chevron-left" @click="getBack" class="float-left"></v-btn>
-    <h1>
+
+    <h1 class="text-center">
       {{ instance.uid }}
       <v-icon icon="mdi-heart" color="red" size="32" v-if="isFavorite"></v-icon>
     </h1>
 
-    <v-row align="center">
-      <v-col lg="6">
-        <v-table class="text-caption">
-          <thead>
-          <tr>
-            <th class="text-left">Attribute</th>
-            <th class="text-left">Value</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="meta in metaTable" :key="meta.key">
-            <td>{{ meta.key }}</td>
-            <td>{{ meta.value }}</td>
-          </tr>
-          </tbody>
-        </v-table>
-        <a :href="buildUrl(instance.path)" download="download" target="_blank">
-          <v-chip prepend-icon="mdi-download" label>
-            Download
-          </v-chip>
-        </a>
+    <div class="mt-5">
 
-        <v-chip prepend-icon="mdi-eye" label class="ms-3"
-                v-if="!liveVisualization"
-                @click="liveVisualization = !liveVisualization">
-          Live Visualization
-        </v-chip>
+      <v-tabs
+          v-model="tab"
+          color="primary"
+          align-tabs="center"
+          direction="horizontal"
+      >
+        <v-tab prepend-icon="mdi-information" text="Details" value="details"></v-tab>
+        <v-tab prepend-icon="mdi-gesture-tap" text="Interactive Visualization" value="visualization"></v-tab>
+        <v-tab prepend-icon="mdi-file-compare" text="Solutions" value="solutions"></v-tab>
+      </v-tabs>
 
-      </v-col>
-      <v-col lg="6">
-        <vue-image-zoomer :regular="instance.image" click-zoom v-if="instance.image"/>
-        <div v-if="instance.image === null">
-          <v-alert type="warning">
-            No static visualization available
-          </v-alert>
-        </div>
-      </v-col>
-    </v-row>
+      <v-tabs-window v-model="tab">
+        <v-tabs-window-item value="details">
+          <v-card flat>
+            <v-card-text>
+              <v-row align="center">
+                <v-col lg="6">
+                  <v-table class="text-caption">
+                    <thead>
+                    <tr>
+                      <th class="font-weight-bold">Attribute</th>
+                      <th class="font-weight-bold">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="meta in metaTable" :key="meta.key">
+                      <td>{{ meta.key }}</td>
+                      <td>{{ meta.value }}</td>
+                    </tr>
+                    </tbody>
+                  </v-table>
+                  <div class="text-center mt-3">
+                    <a :href="buildUrl(instance.path)" download="download" target="_blank">
+                      <v-chip prepend-icon="mdi-download" label>
+                        Download
+                      </v-chip>
+                    </a>
+                  </div>
 
-    <MaximumPolygonPackingVisualization
-        :instance="instance"
-        v-if="isMaximumPolygonPacking && liveVisualization"/>
+                </v-col>
+                <v-col lg="6">
+                  <vue-image-zoomer :regular="instance.image" click-zoom v-if="instance.image"/>
+                  <div v-if="instance.image === null">
+                    <v-alert type="warning">
+                      No static visualization available
+                    </v-alert>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item value="visualization">
+          <v-card flat>
+            <v-card-text>
+              <MaximumPolygonPackingVisualization
+                  :url="service.getInstanceRawUrl(instance.uid)"
+                  v-if="isMaximumPolygonPacking"/>
+            </v-card-text>
+          </v-card>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item value="solutions">
+          <v-card flat>
+            <v-card-text>
+              <v-table>
+                <thead>
+                <tr>
+                  <th class="text-left">Solution</th>
+                  <th class="text-left">Value</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="solution in orderedSolutions" :key="solution.id">
+                  <td>{{ solution.id }}</td>
+                  <td>{{ solution.value }}</td>
+                  <td class="text-end">
+                    <v-btn @click="solutionDialog = true; solutionToVisualize = solution;"
+                           flat
+                           icon="mdi-eye"></v-btn>
+                    <v-btn :href="buildUrl(solution.path)"
+                           flat
+                           download="download"
+                           target="_blank" icon="mdi-download">
+                    </v-btn>
+                  </td>
+                </tr>
+                </tbody>
+              </v-table>
+
+              <v-dialog
+                  v-model="solutionDialog"
+                  max-width="1000"
+              >
+                <v-card prepend-icon="mdi-eye"
+                        :title="'Solution ' + solutionToVisualize.id + ' with value ' + solutionToVisualize.value">
+                  <v-card-text>
+                    <MaximumPolygonPackingVisualization
+                        :url="service.getInstanceRawUrl(instance.uid)"
+                        :solution-url="service.getSolutionRawUrl(instance.uid, solutionToVisualize.id)"
+                        v-if="isMaximumPolygonPacking"/>
+                  </v-card-text>
+
+                  <v-divider></v-divider>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+
+                    <v-btn
+                        text="Close"
+                        variant="plain"
+                        @click="solutionDialog = false"
+                    ></v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-card-text>
+          </v-card>
+        </v-tabs-window-item>
+      </v-tabs-window>
+    </div>
+
   </v-container>
-
 
 </template>
 
@@ -73,31 +159,47 @@ export default {
     isMaximumPolygonPacking() {
       return this.problem === Problems.MaximumPolygonPacking.id
     },
+    orderedSolutions() {
+      if (this.isMaximumPolygonPacking) {
+        return this.solutions.slice(0).sort((a, b) => b.value - a.value)
+      }
+      return this.solutions.slice(0).sort((a, b) => a.value - b.value)
+    },
     metaTable() {
-      let problemName = this.isMaximumPolygonPacking? Problems.MaximumPolygonPacking.name : "unknown";
-
+      let problemName = this.isMaximumPolygonPacking ? Problems.MaximumPolygonPacking.name : "unknown";
       return [
         {key: 'Problem', value: problemName},
         {key: 'Name', value: this.instance.uid},
         {key: '#items', value: this.instance.num_items},
+        {key: '#solutions', value: this.solutions.length},
       ]
     }
   },
   components: {MaximumPolygonPackingVisualization},
   data: function () {
     return {
+      tab: 'solutions',
+      solutionDialog: false, // handles the solution dialog
+      solutionToVisualize: null,
       uid: this.$route.params.identifier,
       problem: this.$route.params.problem,
       isFavorite: false,
       instance: null,
-      liveVisualization: false
+      liveVisualization: false,
+      service: new InstancesService(this.$route.params.problem),
+      solutions: [],
     }
   },
   mounted() {
-    (new InstancesService(this.problem)).getInstance(this.uid).then((response) => {
-      console.log(response.data)
+    this.service.getInstance(this.uid).then((response) => {
       this.instance = response.data
       this.isFavorite = UserService.isFavorite(this.instance)
+    }).catch((error) => {
+      console.error(error)
+    });
+
+    this.service.getSolutions(this.uid).then((response) => {
+      this.solutions = response.data
     }).catch((error) => {
       console.error(error)
     });

@@ -24,8 +24,20 @@ class InstancesService {
         return axios.get(this.baseUrl() + "instance/" + id)
     }
 
+    getSolutions(id) {
+        return axios.get(this.baseUrl() + "instances/" + id + "/solutions")
+    }
+
     getInstanceRaw(id) {
-        return axios.get(this.baseUrl() + "instance/" + id + "/raw")
+        return axios.get(this.getInstanceRawUrl(id))
+    }
+
+    getInstanceRawUrl(id) {
+        return this.baseUrl() + "instance/" + id + "/raw";
+    }
+
+    getSolutionRawUrl(instanceId, solutionId) {
+        return this.baseUrl() + "instances/" + instanceId + "/solutions/" + solutionId + "/raw";
     }
 
     getInstances(search, filters, paginationData) {
