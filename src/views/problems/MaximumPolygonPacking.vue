@@ -1,5 +1,6 @@
 <script setup>
 import MathFormula from "@/components/math/MathFormula.vue";
+import MaximumPolygonPackingVisualization from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
 
 </script>
 
@@ -7,6 +8,8 @@ import MathFormula from "@/components/math/MathFormula.vue";
   <v-container>
 
     <h1 class="text-h3 mb-4">Maximum Polygon Packing</h1>
+
+    <MaximumPolygonPackingVisualization url="http://localhost:8000/max_poly_packing/instance/random_rcf2_x2871624_50/raw"/>
 
 
     <p>

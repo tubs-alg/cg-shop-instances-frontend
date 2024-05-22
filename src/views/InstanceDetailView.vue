@@ -178,7 +178,7 @@ export default {
   components: {MaximumPolygonPackingVisualization},
   data: function () {
     return {
-      tab: 'solutions',
+      tab: 'details',
       solutionDialog: false, // handles the solution dialog
       solutionToVisualize: null,
       uid: this.$route.params.identifier,

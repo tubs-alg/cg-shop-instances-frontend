@@ -10,7 +10,22 @@
         color="primary"
         v-if="data === null"
     ></v-progress-circular>
-    <div :id="sceneId"></div>
+
+    <div class="text-end mb-1">
+      <v-btn-toggle
+          v-model="colorScheme"
+          variant="outlined"
+          divided
+      >
+        <v-btn icon="mdi-palette" value="default"></v-btn>
+        <v-btn icon="mdi-sun-thermometer" value="heatmap"></v-btn>
+      </v-btn-toggle>
+    </div>
+
+    <div class="position-relative" :id="sceneContainerId">
+      <div :id="sceneId"></div>
+    </div>
+
 
     <div v-if="data !==null" class="text-center mt-1 text-sm-caption">
       Controls: Mouse wheel to zoom, Mouse click to pan
@@ -22,8 +37,12 @@
 
 <script>
 import * as THREE from 'three';
-import {OrbitControls} from "three/addons";
+import {CSS2DObject, CSS2DRenderer, OrbitControls} from "three/addons";
 import axios from "axios";
+import {Box3, Raycaster, Vector2, Vector3} from "three";
+
+import {createColors, rgbHex} from 'color-map'
+
 
 export default {
   name: "MaximumPolygonPackingVisualization",
@@ -31,10 +50,24 @@ export default {
     url: String,
     solutionUrl: String
   },
+  watch: {
+    colorScheme() {
+      this.colorSchemeChanged = true;
+    }
+  },
+  computed: {
+    maxValue() {
+      if (this.data === null) return 0;
+      return Math.max(...this.data.items.map(item => item.value))
+    }
+  },
   data() {
     return {
+      colorScheme: "default",
+      colorSchemeChanged: false,
       data: null,
-      sceneId: this.$.uid + '-scene'
+      sceneId: this.$.uid + '-scene',
+      sceneContainerId: this.$.uid + '-sceneContainer'
     }
   },
   mounted() {
@@ -63,12 +96,21 @@ export default {
       )
       return polyGeometry
     },
-    polygonFromCoordinates(coordinates, color) {
-      return new THREE.Mesh(this.polygonGeometryFromCoordinates(coordinates),
+    polygonFromCoordinates(coordinates, color, itemIdx = null) {
+      let mesh = new THREE.Mesh(this.polygonGeometryFromCoordinates(coordinates),
           new THREE.MeshBasicMaterial({
             color: color,
             side: THREE.DoubleSide
           }))
+
+      mesh.itemIdx = itemIdx;
+
+      if (itemIdx !== null) {
+        const value = this.data.items[itemIdx].value
+        mesh.label = "value: " + value
+      }
+
+      return mesh
     },
     polygonBoundaryFromCoordinates(coordinates, color) {
       const edgesGeometry = new THREE.EdgesGeometry(this.polygonGeometryFromCoordinates(coordinates))
@@ -123,6 +165,73 @@ export default {
         }
       })
     },
+    colorForItem(i) {
+      if (this.colorScheme === "default") {
+        let itemColors = ['#a1c9f4', '#8de5a1', '#ff9f9b', '#d0bbff', '#fffea3', '#b9f2f0']
+        return itemColors[i % itemColors.length]
+      } else {
+        const n = 72;
+        const rgbaRange = createColors([240, 207, 104], [186, 55, 55], n+1)
+        const value = this.data.items[i].value
+        return rgbHex(rgbaRange[Math.floor(value / this.maxValue * n)])
+      }
+    },
+    arrangeItems(aspectRatio, containerWidth) {
+      let polygons = [];
+      let totalRowHeight = 0;
+      let currentRowHeight = 0;
+      let currentRowWidth = 0;
+      let desiredWidth = aspectRatio * containerWidth * 2;
+
+      this.data.items.forEach((item, i) => {
+
+        let itemWidth = Math.max(...item.x)
+        let itemHeight = Math.max(...item.y)
+
+        if (currentRowWidth + itemWidth > desiredWidth) {
+          currentRowWidth = 0;
+          totalRowHeight += currentRowHeight;
+          currentRowHeight = 0;
+        }
+
+        currentRowWidth += 0.005 * containerWidth;
+
+        let coordinates = this.coordinatesFromJson(item);
+
+        coordinates = this.shiftCoordinates(coordinates,
+            1.05 * containerWidth + currentRowWidth,
+            totalRowHeight + 0.005 * containerWidth
+        )
+
+        currentRowWidth += itemWidth
+        currentRowHeight = Math.max(currentRowHeight, itemHeight)
+
+        polygons.push(this.polygonFromCoordinates(coordinates, this.colorForItem(i), i))
+      })
+
+      return {
+        height: totalRowHeight,
+        polygons: polygons
+      }
+    },
+    setupLabelRenderer(width, height) {
+      const labelRenderer = new CSS2DRenderer();
+      labelRenderer.setSize(width, height);
+      labelRenderer.domElement.style.position = 'absolute';
+      labelRenderer.domElement.style.top = '0px';
+      labelRenderer.domElement.style.left = '0px';
+      labelRenderer.domElement.style.pointerEvents = 'none';
+      document.getElementById(this.sceneContainerId).appendChild(labelRenderer.domElement);
+
+      return labelRenderer;
+    },
+    setupLabel() {
+      const labelDiv = document.createElement('div');
+      labelDiv.className = 'label';
+      const label = new CSS2DObject(labelDiv);
+      label.visible = false;
+      return label;
+    },
     initializeScene() {
       const width = document.getElementById(this.sceneId).offsetWidth;
       const height = 500;
@@ -137,6 +246,10 @@ export default {
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setSize(width, height);
       document.getElementById(this.sceneId).appendChild(renderer.domElement);
+
+      const labelRenderer = this.setupLabelRenderer(width, height);
+      let label = this.setupLabel();
+      scene.add(label);
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableRotate = false;
@@ -153,13 +266,6 @@ export default {
 
       let allObjects = new THREE.Group();
 
-      let itemColors = ['#a1c9f4', '#8de5a1', '#ff9f9b', '#d0bbff', '#fffea3', '#b9f2f0']
-
-      let totalRowHeight = 0;
-      let currentRowHeight = 0;
-      let currentRowWidth = 0;
-      let desiredWidth = aspectRatio * containerWidth * 2;
-
       if (this.data.solution) {
         this.data.solution.packing.item_indices.forEach((itemIdx, i) => {
           let item = this.data.items[itemIdx];
@@ -169,40 +275,13 @@ export default {
           let coordinates = this.coordinatesFromJson(item);
           coordinates = this.shiftCoordinates(coordinates, xTranslation, yTranslation);
 
-          allObjects.add(this.polygonFromCoordinates(coordinates, itemColors[i % itemColors.length]))
+          allObjects.add(this.polygonFromCoordinates(coordinates, this.colorForItem(i), i))
         });
       } else {
-        this.data.items.forEach((item, i) => {
-
-          let itemWidth = Math.max(...item.x)
-          let itemHeight = Math.max(...item.y)
-
-          if (currentRowWidth + itemWidth > desiredWidth) {
-            currentRowWidth = 0;
-            totalRowHeight += currentRowHeight;
-            currentRowHeight = 0;
-          }
-
-          currentRowWidth += 0.005 * containerWidth;
-
-          let coordinates = this.coordinatesFromJson(item);
-
-          coordinates = this.shiftCoordinates(coordinates,
-              1.05 * containerWidth + currentRowWidth,
-              totalRowHeight + 0.005 * containerWidth
-          )
-
-          currentRowWidth += itemWidth
-          currentRowHeight = Math.max(currentRowHeight, itemHeight)
-
-          allObjects.add(this.polygonFromCoordinates(coordinates, itemColors[i % itemColors.length]))
-
-        })
-
-        container = this.shiftCoordinates(container, 0, (totalRowHeight / 2) - (containerHeight / 2))
-
+        let arrangedItems = this.arrangeItems(aspectRatio, containerWidth)
+        allObjects.add(...arrangedItems.polygons)
+        container = this.shiftCoordinates(container, 0, (arrangedItems.height / 2) - (containerHeight / 2))
       }
-
 
       allObjects.add(this.polygonBoundaryFromCoordinates(container, "#000000"));
 
@@ -211,12 +290,54 @@ export default {
       this.fitCameraToObject(allObjects, camera, 3, controls);
       controls.update()
 
-      function animate() {
-        requestAnimationFrame(animate)
-        renderer.render(scene, camera)
-      }
+      // Track mouse movement to pick objects
+      const raycaster = new Raycaster();
+      const mouse = new Vector2(-3, -3); // set these values to be off screen initially.
 
-      animate()
+      document.getElementById(this.sceneId).addEventListener('mousemove', (e) => {
+        let rect = e.target.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / width) * 2 - 1
+        mouse.y = -((e.clientY - rect.top) / height) * 2 + 1
+      });
+
+      renderer.setAnimationLoop(() => {
+        controls.update();
+
+        // Pick objects from view using normalized mouse coordinates
+        raycaster.setFromCamera(mouse, camera);
+
+        const [hovered] = raycaster.intersectObjects(allObjects.children);
+
+        if (hovered) {
+          // Setup label
+          label.visible = true;
+          label.element.textContent = hovered.object.label
+
+          let boundingBox = new THREE.Box3().setFromObject(hovered.object);
+          let center = boundingBox.getCenter(new THREE.Vector3());
+
+          // Move label over hovered element
+          label.position.set(center.x, center.y, center.z + 1)
+        } else {
+          // Reset label
+          label.visible = false;
+          label.element.textContent = '';
+        }
+
+        if (this.colorSchemeChanged) {
+          // apply new color Scheme
+          allObjects.children.forEach((child, i) => {
+            if (child.itemIdx !== undefined && child.itemIdx !== null) {
+              child.material.color.set(this.colorForItem(child.itemIdx))
+            }
+          })
+
+        }
+
+        renderer.render(scene, camera);
+        labelRenderer.render(scene, camera);
+      });
+
     }
   }
 }
@@ -227,5 +348,13 @@ export default {
 #scene {
   border-radius: 50px;
   overflow: hidden;
+}
+
+:deep(.label) {
+  background: #2c3e50;
+  color: white;
+  margin-top: -3em;
+  padding: .5em;
+  border-radius: 5px;
 }
 </style>
