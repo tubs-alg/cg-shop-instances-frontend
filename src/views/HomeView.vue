@@ -1,10 +1,12 @@
 <template>
   <div class="hero">
     <div class="gradient">
+
       <v-container>
-        <v-row>
-          <v-col lg="8">
-            <h1 class="title font-weight-light">CG:SHOP Instances Collection</h1>
+        <div class="hero-img">
+
+          <div>
+            <h1 class="text-h2 mb-5">CG:SHOP Instances</h1>
             <div>
               Welcome to the CG:SHOP Instances Collection, where scientific progress meets practicality. We curate a
               diverse
@@ -15,60 +17,67 @@
             </div>
             <br>
             <v-btn rounded variant="outlined">Learn More</v-btn>
-
-          </v-col>
-          <v-col lg="4">
-            <v-img :src="require('@/assets/hero.png')" max-height="400"></v-img>
-          </v-col>
-        </v-row>
-
+          </div>
+        </div>
       </v-container>
     </div>
   </div>
 
   <div class="py-15">
+
     <v-container>
-      <v-row>
-        <v-col lg="4">
-          <ProblemCard link="/mpp" title="Maximum Polygon Packing"
-                       description="Optimal packing problems have an extensive history in Computational Geometry.
-                       They are also relevant in many practical contexts."/>
-        </v-col>
-        <v-col lg="4">
 
+      <v-row justify="center" align="center">
+        <v-col lg="6">
+          <h2>Computational Geometry</h2>
+          <p class="text-justify">
+            Computational Geometry can be viewed as the study of algorithms for solving geometric problems on a computer.
+            Applications for these geometric problems are numerous, including a variety of fields such as Robotics (motion
+            planning and visibility problems), Operations Research (geometric location and search, route planning), Integrated
+            Circuit Design (IC geometric design and verification), Computer-Aided Engineering (CAE), Mesh Generation,
+            Computer Vision and Shape Reconstruction. These problems are often cast as optimization problems in which one
+            is required to find a set of specific geometric objects that maximizes or minimizes a given objective function.
+            In the over 40 years since the beginning of Computational Geometry, a wide range of optimization problems
+            have been proposed and investigated by computational geometers, mainly from a theoretical point of view. Many
+            of those tasks belong to the NP-hard class of problems, for which the existence of polynomial-time algorithms
+            implies P=NP. While Computational Geometry has considered a wide spectrum of NP-hard optimization problems,
+            positive results typically imply polynomial-time, constant-factor approximation algorithms, without much regard
+            for practical solution quality, realistic running times, or even exact solutions.
+          </p>
         </v-col>
-        <v-col lg="4">
-
+        <v-col lg="6">
+          <v-img class="mx-auto" max-width="60%" :src="require('@/assets/mwt.png')"></v-img>
         </v-col>
-
       </v-row>
 
-    </v-container>
 
+
+    </v-container>
   </div>
 
-
   <div class="bg-off-color py-15">
-    <v-container>
-      <v-row align="center">
-        <v-col lg="6">
-          <v-img :src="require('@/assets/benchmarks.png')" width="50%" class="mx-auto"></v-img>
-        </v-col>
-        <v-col lg="6">
-          <h2 class="mt-n1 text-h3 font-weight-light mb-4">
-            About the Project
-          </h2>
-          Historically, the analysis of hard instances of difficult optimization problems has contributed a lot to
-          scientific progress, e.g., for the Traveling Salesman Problem.
-          Moreover, many practical studies require access to a wide range of instance types and sizes of established
-          and
-          reproducible quality.
-          However, for many optimization problems, it is not straightforward to find hard natural instances of
-          sufficient
-          quality, quantity and scalability.
-        </v-col>
-      </v-row>
-    </v-container>
+
+      <v-container>
+        <h2 class="text-h3 font-weight-light mb-10 text-center">
+          Our Problem Collection
+        </h2>
+        <v-row>
+          <v-col lg="4">
+            <ProblemCard link="/mpp" title="Maximum Polygon Packing"
+                         :img="require('@/assets/problems/mpp.png')"
+                         description="Optimal packing problems have an extensive history in Computational Geometry.
+                       They are also relevant in many practical contexts."/>
+          </v-col>
+          <v-col lg="4">
+
+          </v-col>
+          <v-col lg="4">
+
+          </v-col>
+
+        </v-row>
+
+      </v-container>
   </div>
 
   <div class="py-15">
@@ -145,14 +154,26 @@ export default {
 
 <style>
 .title {
-  font-weight: 200;
+  font-weight: 300;
   font-size: 54px;
 }
 
 .hero {
   margin-top: -64px;
-  background-color: #2c3e50;
+  background-color: #384047;
   color: white;
+}
+
+.hero .hero-img {
+  background-image: url("@/assets/hero.svg");
+  background-size: contain;
+  background-position: center left;
+
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  padding-left: 500px
 }
 
 .hero .gradient {

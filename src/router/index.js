@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import {mathjax} from "mathjax/es5/tex-mml-chtml.js"
 
 const routes = [
   {

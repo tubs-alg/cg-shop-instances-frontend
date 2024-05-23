@@ -3,13 +3,13 @@
 </script>
 
 <template>
-  <span>\({{ formula }}\)</span>
+  <span v-katex:auto>\({{ formula }}\)</span>
 </template>
 
 <script>
 
 export default {
-  name: "MathJax",
+  name: "MathFormula",
   props: {
     formula: String
   }

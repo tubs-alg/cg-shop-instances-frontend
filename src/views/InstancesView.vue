@@ -8,6 +8,17 @@ import Problems from "@/data/problems";
                          color="transparent"></v-skeleton-loader>
       <v-card v-if="!currentlyUpdatingFilters" elevation="0" max-width="800" class="mx-auto" color="transparent">
         <v-container>
+
+          <h1 class="text-h5 font-weight-light mb-5 d-flex align-center justify-space-between">
+            <span>
+              {{ problemName }} Instances
+            </span>
+            <router-link :to="'/' + problem" class="text-white">
+              <v-btn variant="outlined" size="small">Learn more</v-btn>
+            </router-link>
+
+          </h1>
+
           <v-combobox
               v-model="search"
               v-model:search="search"
@@ -20,47 +31,66 @@ import Problems from "@/data/problems";
                                         @filtersChanged="filtersChanged"
                                         v-if="problem === Problems.MaximumPolygonPacking.id"/>
 
-          <div class="text-end">
-            <router-link :to="'/' + problem" class="text-white">
-              <v-btn variant="outlined" append-icon="mdi-open-in-new">Learn more about this problem</v-btn>
-            </router-link>
-          </div>
+
+          <v-expand-transition>
+            <div class="text-end" v-if="showReload">
+              <v-btn fab @click="reload" prepend-icon="mdi-reload">Refresh</v-btn>
+            </div>
+          </v-expand-transition>
+
         </v-container>
       </v-card>
     </div>
+
   </div>
-  <v-container class="d-flex justify-space-between align-center mt-3">
+
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none" height="100px" width="100%" >
+    <path fill="#2e506c" fill-opacity="1" d="M0,192L48,197.3C96,203,192,213,288,186.7C384,160,480,96,576,101.3C672,107,768,181,864,208C960,235,1056,213,1152,202.7C1248,192,1344,192,1392,192L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
+
+  </svg>
+
+  <v-container class="d-flex justify-space-between align-center">
     <span class="text-grey">{{ n }} instances found</span>
     <v-select
         single-line
-        max-width="200"
+        max-width="180"
+        density="compact"
         v-model="sort"
         :items="sortOptions"
         label="Sort by"
-        class="me-5"
+        class="me-5 sort-select"
         rounded="rounded-xl"
     >
       <template #selection="{ props, item }">
-        <v-list-item v-bind="props" :title="sortOptionTitle(item)"
-                     :prepend-icon="sortOptionIcon(item)">
+        <v-list-item v-bind="props" density="compact">
+          <template v-slot:title>
+            <v-list-item-title>
+              <v-icon :icon="sortOptionIcon(item)" size="x-small"></v-icon>
+              {{ sortOptionTitle(item) }}
+            </v-list-item-title>
+          </template>
         </v-list-item>
       </template>
 
       <template v-slot:item="{ props, item }">
-        <v-list-item v-bind="props"
-                     :title="sortOptionTitle(item)"
-                     :prepend-icon="sortOptionIcon(item)">
+        <v-list-item v-bind="props" density="compact">
+          <template v-slot:title>
+            <v-list-item-title>
+              <v-icon :icon="sortOptionIcon(item)" size="x-small"></v-icon>
+              {{ sortOptionTitle(item) }}
+            </v-list-item-title>
+          </template>
         </v-list-item>
       </template>
 
     </v-select>
   </v-container>
 
-
   <v-card elevation="0">
     <v-fade-transition>
-      <v-btn fab icon="mdi-reload" position="absolute" v-if="showReload"
-             :class="currentlyReloading? 'rotate': ''" @click="reload"
+      <v-btn fab icon="mdi-reload" position="absolute"
+             v-if="currentlyReloading"
+             class="rotate"
              :style="{left: '50%', transform:'translate(-50%, 50%)', 'z-index': 1000}"></v-btn>
     </v-fade-transition>
 
@@ -105,33 +135,41 @@ export default {
   computed: {
     service() {
       return new InstancesService(this.problem)
+    },
+    problemName() {
+      let problem = Object.keys(Problems).find((key) => {
+        return Problems[key].id === this.problem;
+      });
+
+      if (problem) {
+        return Problems[problem].name;
+      }
+
+      return "Unknown problem"
     }
   },
   data: function () {
     return {
-      "problems": Object.keys(Problems).map((key) => {
-        return Problems[key];
-      }),
-      "search": "",
-      "problem": this.$route.params.problem,
-      "problemData": {},
-      "instances": [],
-      "sortOptions": ["-uid", "uid", "-size", "size"],
-      "sort": "uid",
-      "n": 0,
-      "limit": 10,
-      "offset": 0,
-      "scrollMode": "intersect",
-      "showReload": true,
-      "currentlyReloading": true,
-      "currentlyUpdatingFilters": true,
+      search: "",
+      problem: this.$route.params.problem,
+      problemData: {},
+      instances: [],
+      sortOptions: ["-uid", "uid", "-size", "size"],
+      sort: "uid",
+      n: 0,
+      limit: 10,
+      offset: 0,
+      scrollMode: "intersect",
+      showReload: false,
+      currentlyReloading: true,
+      currentlyUpdatingFilters: true,
     }
   },
   mounted() {
     this.updateFilters();
   },
   methods: {
-    sortOptionTitle(option){
+    sortOptionTitle(option) {
       const mappings = {
         "-uid": "name",
         "uid": "name",
@@ -163,13 +201,14 @@ export default {
     getFilterValues() {
       return this.$refs.filterComponent.filter();
     },
-    requestInstances() {
+    requestInstances(includeCount = false) {
       let component = this;
       return this.service.getInstances(component.search,
           this.getFilterValues(), {
             limit: component.limit,
             offset: component.offset,
-            sort: component.sort
+            sort: component.sort,
+            add_total_count: includeCount
           });
     },
     reload() {
@@ -177,19 +216,18 @@ export default {
       component.scrollMode = "manual"
       component.instances = []
       component.offset = 0;
+      component.showReload = false;
       component.currentlyReloading = true
 
       setTimeout(() => {
-        this.requestInstances().then(function (response) {
-          component.n = "xxx"
+        this.requestInstances(true).then(function (response) {
+          component.n = response.headers["x-total-count"]
           component.instances = response.data
           component.scrollMode = "intersect"
-          component.showReload = false;
           component.currentlyReloading = false;
           component.offset += response.data.length
         }).catch(function () {
           component.scrollMode = "intersect"
-          component.showReload = false;
           component.currentlyReloading = false;
         });
       }, 300);
@@ -228,15 +266,15 @@ export default {
 
 .search-area {
   margin-top: -64px;
-  background-color: #482c50;
+  background-color: #2e506c;
   color: white;
 
 }
 
 .search-area .gradient {
   background-size: cover !important;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.65) 100%), no-repeat center center scroll;
+  /*background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.65) 100%), no-repeat center center scroll;*/
   padding-top: 64px;
-  padding-bottom: 64px;
 }
+
 </style>

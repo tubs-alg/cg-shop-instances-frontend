@@ -39,9 +39,10 @@
 import * as THREE from 'three';
 import {CSS2DObject, CSS2DRenderer, OrbitControls} from "three/addons";
 import axios from "axios";
-import {Box3, Raycaster, Vector2, Vector3} from "three";
+import {Raycaster, Vector2} from "three";
 
 import {createColors, rgbHex} from 'color-map'
+import {th} from "vuetify/locale";
 
 
 export default {
@@ -59,6 +60,10 @@ export default {
     maxValue() {
       if (this.data === null) return 0;
       return Math.max(...this.data.items.map(item => item.value))
+    },
+    minValue() {
+      if (this.data === null) return 0;
+      return Math.min(...this.data.items.map(item => item.value))
     }
   },
   data() {
@@ -171,9 +176,9 @@ export default {
         return itemColors[i % itemColors.length]
       } else {
         const n = 72;
-        const rgbaRange = createColors([240, 207, 104], [186, 55, 55], n+1)
+        const rgbaRange = createColors([150, 150, 150], [186, 100, 100], n + 1)
         const value = this.data.items[i].value
-        return rgbHex(rgbaRange[Math.floor(value / this.maxValue * n)])
+        return rgbHex(rgbaRange[Math.floor((value - this.minValue) / (this.maxValue - this.minValue) * n)])
       }
     },
     arrangeItems(aspectRatio, containerWidth) {
@@ -293,36 +298,49 @@ export default {
       // Track mouse movement to pick objects
       const raycaster = new Raycaster();
       const mouse = new Vector2(-3, -3); // set these values to be off screen initially.
+      let lastHoverUpdate = Date.now();
+      let requireHoverUpdate = false;
 
       document.getElementById(this.sceneId).addEventListener('mousemove', (e) => {
-        let rect = e.target.getBoundingClientRect();
-        mouse.x = ((e.clientX - rect.left) / width) * 2 - 1
-        mouse.y = -((e.clientY - rect.top) / height) * 2 + 1
+        if(Date.now() - lastHoverUpdate > 50) {
+          let rect = e.target.getBoundingClientRect();
+          mouse.x = ((e.clientX - rect.left) / width) * 2 - 1
+          mouse.y = -((e.clientY - rect.top) / height) * 2 + 1
+
+          lastHoverUpdate = Date.now();
+          requireHoverUpdate = true;
+        }
       });
 
       renderer.setAnimationLoop(() => {
-        controls.update();
+        controls.update()
 
-        // Pick objects from view using normalized mouse coordinates
-        raycaster.setFromCamera(mouse, camera);
+        if(requireHoverUpdate) {
+          // Pick objects from view using normalized mouse coordinates
+          raycaster.setFromCamera(mouse, camera);
 
-        const [hovered] = raycaster.intersectObjects(allObjects.children);
+          const [hovered] = raycaster.intersectObjects(allObjects.children);
 
-        if (hovered) {
-          // Setup label
-          label.visible = true;
-          label.element.textContent = hovered.object.label
+          if (hovered) {
+            // Setup label
+            label.visible = true;
+            label.element.textContent = hovered.object.label
 
-          let boundingBox = new THREE.Box3().setFromObject(hovered.object);
-          let center = boundingBox.getCenter(new THREE.Vector3());
+            let boundingBox = new THREE.Box3().setFromObject(hovered.object);
+            let center = boundingBox.getCenter(new THREE.Vector3());
 
-          // Move label over hovered element
-          label.position.set(center.x, center.y, center.z + 1)
-        } else {
-          // Reset label
-          label.visible = false;
-          label.element.textContent = '';
+            // Move label over hovered element
+            label.position.set(center.x, center.y, center.z + 1)
+          } else {
+            // Reset label
+            label.visible = false;
+            label.element.textContent = '';
+          }
+
+          requireHoverUpdate = false;
+
         }
+
 
         if (this.colorSchemeChanged) {
           // apply new color Scheme
@@ -332,6 +350,7 @@ export default {
             }
           })
 
+          this.colorSchemeChanged = false;
         }
 
         renderer.render(scene, camera);

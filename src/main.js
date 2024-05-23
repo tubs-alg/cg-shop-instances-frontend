@@ -15,6 +15,9 @@ import * as labsComponents from 'vuetify/labs/components'
 import VueImageZoomer from 'vue-image-zoomer'
 import 'vue-image-zoomer/dist/style.css';
 
+import VueKatex from '@hsorby/vue3-katex';
+import 'katex/dist/katex.min.css';
+
 
 const vuetify = createVuetify({
     components: {
@@ -28,4 +31,6 @@ const vuetify = createVuetify({
 })
 
 
-createApp(App).use(router).use(store).use(vuetify).use(VueImageZoomer).mount('#app')
+createApp(App).use(router).use(store).use(vuetify).use(VueImageZoomer).use(VueKatex, {
+    globalOptions: {}
+}).mount('#app');

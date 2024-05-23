@@ -9,7 +9,6 @@
 
 
   <v-container v-if="instance">
-
     <v-btn icon="mdi-chevron-left" @click="getBack" class="float-left"></v-btn>
 
     <h1 class="text-center">
@@ -18,16 +17,15 @@
     </h1>
 
     <div class="mt-5">
-
       <v-tabs
           v-model="tab"
           color="primary"
-          align-tabs="center"
+          align-tabs="end"
           direction="horizontal"
       >
         <v-tab prepend-icon="mdi-information" text="Details" value="details"></v-tab>
         <v-tab prepend-icon="mdi-gesture-tap" text="Interactive Visualization" value="visualization"></v-tab>
-        <v-tab prepend-icon="mdi-file-compare" text="Solutions" value="solutions"></v-tab>
+        <v-tab v-if="solutions.length > 0" prepend-icon="mdi-file-compare" text="Solutions" value="solutions"></v-tab>
       </v-tabs>
 
       <v-tabs-window v-model="tab">
@@ -82,7 +80,7 @@
           </v-card>
         </v-tabs-window-item>
 
-        <v-tabs-window-item value="solutions">
+        <v-tabs-window-item value="solutions" v-if="solutions.length > 0">
           <v-card flat>
             <v-card-text>
               <v-table>

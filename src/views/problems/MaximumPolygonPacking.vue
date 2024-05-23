@@ -2,6 +2,7 @@
 import MathFormula from "@/components/math/MathFormula.vue";
 import MaximumPolygonPackingVisualization from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
 
+const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/instance/random_rcf2_x2871624_50/raw'
 </script>
 
 <template>
@@ -9,45 +10,43 @@ import MaximumPolygonPackingVisualization from "@/components/visualizations/Maxi
 
     <h1 class="text-h3 mb-4">Maximum Polygon Packing</h1>
 
-    <MaximumPolygonPackingVisualization url="http://localhost:8000/max_poly_packing/instance/random_rcf2_x2871624_50/raw"/>
-
 
     <p>
-      We are happy to announce the Sixth Computational Geometry Challenge,
-      as part of CG Week in Athens, Greece, June 10-14, 2024.
+      The Maximum Polygon Packing Problem was part of the Sixth Computational Geometry Challenge,
+      and is discussed during CG Week in Athens, Greece, June 10-14, 2024.
     </p>
     <p>
-      As in previous years, the objective will be to compute good solutions
+      As in previous years, the objective was be to compute good solutions
       to instances of a difficult geometric optimization problem.
       The specific problem chosen for the 2024 Challenge is
       <strong>Maximum Polygon Packing</strong>, as follows.
     </p>
 
+    <v-divider class="my-5"></v-divider>
+
     <h3>Description</h3>
     <p>
       Given a convex region,
-      <MathFormula formula="P"/>
-      , in the plane, and a collection
+      <MathFormula formula="P"/>,
+      in the plane, and a collection
       of simple polygons,
-      <MathFormula formula="$Q_1,…, Q_n$"/>
-      , each
-      <MathFormula formula="Q_i"/>
+      <MathFormula formula="Q_1,…, Q_n"/>,
+      each <MathFormula formula="Q_i"/>
       with a respective value of
-      <MathFormula formula="c_i"/>
-      ,
-      the task is to find a subset
-      <MathFormula formula="S"/>
-      of
-      <MathFormula formula="\{1,...,n\}"/>
-      and a feasible
-      packing within
-      <MathFormula formula="P"/>
-      of the polygons
-      <MathFormula formula="Q_i"/>
-      (without rotation) for
-      <MathFormula formula="i \in S"/>
-      .
+      <MathFormula formula="c_i"/>,
+      the task is to find a subset <MathFormula formula="S"/> of
+      <MathFormula formula="\{1,...,n\}"/> and a feasible packing within <MathFormula formula="P"/>
+      of the polygons <MathFormula formula="Q_i"/> (without rotation) for <MathFormula formula="i \in S"/>.
     </p>
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>Example Instance</h3>
+
+    <MaximumPolygonPackingVisualization
+        :url="exampleInstanceUrl"/>
+
+    <v-divider class="my-5"></v-divider>
 
     <h3>Objective</h3>
     <p>
@@ -58,6 +57,7 @@ import MaximumPolygonPackingVisualization from "@/components/visualizations/Maxi
 
     <p style="clear: both;"></p>
 
+    <v-divider class="my-5"></v-divider>
 
     <h3>Motivation</h3>
     <p>
@@ -89,6 +89,7 @@ import MaximumPolygonPackingVisualization from "@/components/visualizations/Maxi
 
     <p style="clear: both;"></p>
 
+    <v-divider class="my-5"></v-divider>
 
     <h3>Instances</h3>
     <p>
@@ -97,6 +98,8 @@ import MaximumPolygonPackingVisualization from "@/components/visualizations/Maxi
       You can download them under <b>Download</b> above.
       Make sure to download the actual challenge instances and not the example instances, as only those are evaluated.
     </p>
+
+    <v-divider class="my-5"></v-divider>
 
     <h3>References </h3>
     <p>

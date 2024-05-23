@@ -45,8 +45,11 @@ class InstancesService {
             search: search,
             limit: paginationData.limit,
             offset: paginationData.offset,
-            sort: paginationData.sort
+            sort: paginationData.sort,
+            add_total_count: paginationData.add_total_count
         }
+
+        console.log(params)
 
         Object.keys(filters).forEach((key) => {
             params[key] = filters[key]
