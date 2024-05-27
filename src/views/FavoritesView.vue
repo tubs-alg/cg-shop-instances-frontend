@@ -5,9 +5,9 @@
       <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
     </div>
     <div class="d-flex flex-wrap" v-if="!loading">
-      <v-col v-for="instance in instances" :key="instance.identifier">
+      <v-col v-for="instance in instances" :key="instance.id">
         <v-slide-x-transition appear>
-          <InstanceCard :instance="instance" v-show="true" :problems="problems" :filters="[]"></InstanceCard>
+          <InstanceCard :instance="instance" v-show="true" problem="mpp" :filters="[]"></InstanceCard>
         </v-slide-x-transition>
       </v-col>
     </div>
@@ -31,11 +31,8 @@ export default {
     }
   },
   mounted() {
-    InstancesService.getProblems().then((response) => {
-      this.problems = response.data;
-      this.instances = UserService.getFavorites();
-      this.loading = false
-    });
+    this.instances = UserService.getFavorites();
+    this.loading = false
   }
 };
 </script>

@@ -40,9 +40,12 @@ import * as THREE from 'three';
 import {CSS2DObject, CSS2DRenderer, OrbitControls} from "three/addons";
 import axios from "axios";
 import {Raycaster, Vector2} from "three";
-
+import {
+  polygonFromCoordinates,
+  polygonBoundaryFromCoordinates,
+  shiftCoordinates, fitCameraToObject
+} from "@/lib/visualization/threejs_helper";
 import {createColors, rgbHex} from 'color-map'
-import {th} from "vuetify/locale";
 
 
 export default {
@@ -93,20 +96,8 @@ export default {
     });
   },
   methods: {
-    polygonGeometryFromCoordinates(coordinates) {
-      let polyShape = new THREE.Shape(coordinates.map((p) => new THREE.Vector2(p.x, p.y)))
-      const polyGeometry = new THREE.ShapeGeometry(polyShape);
-      polyGeometry.setAttribute("position", new THREE.Float32BufferAttribute(
-          coordinates.map(p => [p.x, p.y, 0]).flat(), 3)
-      )
-      return polyGeometry
-    },
-    polygonFromCoordinates(coordinates, color, itemIdx = null) {
-      let mesh = new THREE.Mesh(this.polygonGeometryFromCoordinates(coordinates),
-          new THREE.MeshBasicMaterial({
-            color: color,
-            side: THREE.DoubleSide
-          }))
+    addItem(coordinates, color, itemIdx = null) {
+      let mesh = polygonFromCoordinates(coordinates, color);
 
       mesh.itemIdx = itemIdx;
 
@@ -117,43 +108,6 @@ export default {
 
       return mesh
     },
-    polygonBoundaryFromCoordinates(coordinates, color) {
-      const edgesGeometry = new THREE.EdgesGeometry(this.polygonGeometryFromCoordinates(coordinates))
-      return new THREE.LineSegments(edgesGeometry,
-          new THREE.LineBasicMaterial({
-            color: color
-          }))
-    },
-    fitCameraToObject(object, camera, offset, orbitControls) {
-      let boundingBox = new THREE.Box3().setFromObject(object);
-      let size = boundingBox.getSize(new THREE.Vector3());
-      let center = boundingBox.getCenter(new THREE.Vector3());
-
-      // get the max side of the bounding box
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const fov = camera.fov * (Math.PI / 180);
-      let cameraZ = Math.abs(maxDim / 4 * Math.tan(fov * 2));
-
-      // offset the camera as desired - usually a value of ~ 1.25 is good to prevent
-      // object filling the whole canvas
-      if (offset !== undefined && offset !== 0) cameraZ *= offset;
-
-      camera.position.set(center.x, center.y, cameraZ);
-
-      // set the far plane of the camera so that it easily encompasses the whole object
-      const minZ = boundingBox.min.z;
-      const cameraToFarEdge = (minZ < 0) ? -minZ + cameraZ : cameraZ - minZ;
-
-      camera.far = cameraToFarEdge * 3;
-      camera.updateProjectionMatrix();
-
-      if (orbitControls !== undefined) {
-        // set camera to rotate around center of loaded object
-        orbitControls.target = center;
-        // prevent camera from zooming out far enough to create far plane cutoff
-        orbitControls.maxDistance = cameraToFarEdge * 2;
-      }
-    },
     coordinatesFromJson(item) {
       return item.x.map((x, i) => {
         return {
@@ -161,14 +115,6 @@ export default {
           y: item.y[i]
         }
       });
-    },
-    shiftCoordinates(coordinates, dx, dy) {
-      return coordinates.map((p) => {
-        return {
-          x: p.x + dx,
-          y: p.y + dy
-        }
-      })
     },
     colorForItem(i) {
       if (this.colorScheme === "default") {
@@ -178,6 +124,9 @@ export default {
         const n = 72;
         const rgbaRange = createColors([150, 150, 150], [186, 100, 100], n + 1)
         const value = this.data.items[i].value
+
+        if(this.minValue === this.maxValue) return rgbHex(rgbaRange[0])
+
         return rgbHex(rgbaRange[Math.floor((value - this.minValue) / (this.maxValue - this.minValue) * n)])
       }
     },
@@ -203,7 +152,7 @@ export default {
 
         let coordinates = this.coordinatesFromJson(item);
 
-        coordinates = this.shiftCoordinates(coordinates,
+        coordinates = shiftCoordinates(coordinates,
             1.05 * containerWidth + currentRowWidth,
             totalRowHeight + 0.005 * containerWidth
         )
@@ -211,7 +160,7 @@ export default {
         currentRowWidth += itemWidth
         currentRowHeight = Math.max(currentRowHeight, itemHeight)
 
-        polygons.push(this.polygonFromCoordinates(coordinates, this.colorForItem(i), i))
+        polygons.push(this.addItem(coordinates, this.colorForItem(i), i))
       })
 
       return {
@@ -278,21 +227,21 @@ export default {
           let yTranslation = this.data.solution.packing.y_translations[i];
 
           let coordinates = this.coordinatesFromJson(item);
-          coordinates = this.shiftCoordinates(coordinates, xTranslation, yTranslation);
+          coordinates = shiftCoordinates(coordinates, xTranslation, yTranslation);
 
-          allObjects.add(this.polygonFromCoordinates(coordinates, this.colorForItem(i), i))
+          allObjects.add(this.addItem(coordinates, this.colorForItem(i), i))
         });
       } else {
         let arrangedItems = this.arrangeItems(aspectRatio, containerWidth)
         allObjects.add(...arrangedItems.polygons)
-        container = this.shiftCoordinates(container, 0, (arrangedItems.height / 2) - (containerHeight / 2))
+        container = shiftCoordinates(container, 0, (arrangedItems.height / 2) - (containerHeight / 2))
       }
 
-      allObjects.add(this.polygonBoundaryFromCoordinates(container, "#000000"));
+      allObjects.add(polygonBoundaryFromCoordinates(container, "#000000"));
 
       scene.add(allObjects);
 
-      this.fitCameraToObject(allObjects, camera, 3, controls);
+      fitCameraToObject(allObjects, camera, 3, controls);
       controls.update()
 
       // Track mouse movement to pick objects
@@ -302,7 +251,7 @@ export default {
       let requireHoverUpdate = false;
 
       document.getElementById(this.sceneId).addEventListener('mousemove', (e) => {
-        if(Date.now() - lastHoverUpdate > 50) {
+        if (Date.now() - lastHoverUpdate > 50) {
           let rect = e.target.getBoundingClientRect();
           mouse.x = ((e.clientX - rect.left) / width) * 2 - 1
           mouse.y = -((e.clientY - rect.top) / height) * 2 + 1
@@ -315,7 +264,7 @@ export default {
       renderer.setAnimationLoop(() => {
         controls.update()
 
-        if(requireHoverUpdate) {
+        if (requireHoverUpdate) {
           // Pick objects from view using normalized mouse coordinates
           raycaster.setFromCamera(mouse, camera);
 

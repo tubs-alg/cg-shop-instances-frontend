@@ -26,6 +26,11 @@ const routes = [
     path: '/mpp',
     name: 'mpp',
     component: () => import('../views/problems/MaximumPolygonPacking.vue')
+  },
+  {
+    path: '/mcp',
+    name: 'mcp',
+    component: () => import('../views/problems/MinimumConvexPartition.vue')
   }
 ]
 

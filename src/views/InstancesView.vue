@@ -273,7 +273,6 @@ export default {
 
 .search-area .gradient {
   background-size: cover !important;
-  /*background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.65) 100%), no-repeat center center scroll;*/
   padding-top: 64px;
 }
 

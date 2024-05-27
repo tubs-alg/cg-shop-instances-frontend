@@ -3,6 +3,11 @@ const Problems = {
         name: "Maximum Polygon Packing",
         endpoint: "max_poly_packing/",
         id: "mpp"
+    },
+    MinimumConvexPartition: {
+        name: "Minimum Convex Partition",
+        endpoint: "min_convex_partition/",
+        id: "mcp"
     }
 }
 

@@ -62,17 +62,15 @@
           Our Problem Collection
         </h2>
         <v-row>
-          <v-col lg="4">
+          <v-col lg="6" md="6" cols="12">
             <ProblemCard link="/mpp" title="Maximum Polygon Packing"
                          :img="require('@/assets/problems/mpp.png')"
-                         description="Optimal packing problems have an extensive history in Computational Geometry.
-                       They are also relevant in many practical contexts."/>
+                         description="Optimal packing a set of objects into a given container."/>
           </v-col>
-          <v-col lg="4">
-
-          </v-col>
-          <v-col lg="4">
-
+          <v-col lg="6" md="6" cols="12">
+            <ProblemCard link="/mcp" title="Minimum Convex Partition"
+                         :img="require('@/assets/problems/mcp.png')"
+                         description="Partition a point set into a smallest set of convex faces."/>
           </v-col>
 
         </v-row>

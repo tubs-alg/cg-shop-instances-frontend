@@ -51,7 +51,7 @@ const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/insta
     <h3>Objective</h3>
     <p>
       Maximize the total value
-      <MathJax formula=" \sum_{i \in S} c_i"/>
+      <MathFormula formula=" \sum_{i \in S} c_i"/>
       of the packed polygons.
     </p>
 
