@@ -6,7 +6,7 @@ const Problems = {
     },
     MinimumConvexPartition: {
         name: "Minimum Convex Partition",
-        endpoint: "min_convex_partition/",
+        endpoint: "min_conv_partition/",
         id: "mcp"
     }
 }

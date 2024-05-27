@@ -54,19 +54,19 @@ export default {
   computed: {
     maxX() {
       if (this.data === null) return 0;
-      return Math.max(...this.data.points.map(p => p.x))
+      return Math.max(...this.data.points.xs)
     },
     maxY() {
       if (this.data === null) return 0;
-      return Math.max(...this.data.points.map(p => p.y))
+      return Math.max(...this.data.points.ys)
     },
     minX() {
       if (this.data === null) return 0;
-      return Math.min(...this.data.points.map(p => p.x))
+      return Math.min(...this.data.points.xs)
     },
     minY() {
       if (this.data === null) return 0;
-      return Math.min(...this.data.points.map(p => p.y))
+      return Math.min(...this.data.points.ys)
     },
   },
   data() {
@@ -79,8 +79,9 @@ export default {
     }
   },
   mounted() {
-    /*axios.get(this.url).then((response) => {
+    axios.get(this.url).then((response) => {
       this.data = response.data
+      console.log(this.data)
       if (this.solutionUrl) {
         axios.get(this.solutionUrl).then((response) => {
           this.data.solution = response.data
@@ -93,10 +94,7 @@ export default {
       }
     }).catch((error) => {
       console.error(error)
-    });*/
-    this.data = example;
-    this.data.solution = solution;
-    this.initializeScene()
+    });
   },
   methods: {
     addItem(coordinates, color, itemIdx = null) {
@@ -146,6 +144,10 @@ export default {
       renderer.setSize(width, height);
       document.getElementById(this.sceneId).appendChild(renderer.domElement);
 
+      const points = this.data.points.xs.map((x, i) => {
+        return {x: x, y: this.data.points.ys[i]}
+      });
+
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableRotate = false;
       controls.mouseButtons = {
@@ -158,11 +160,13 @@ export default {
 
       if (this.data.solution) {
 
-        this.data.solution.edges.forEach((edge, i) => {
+        console.log(this.data.solution)
 
+        this.data.solution.edges.endpoints_a.forEach((a, i) => {
+          const b = this.data.solution.edges.endpoints_b[i];
           const coordinates = [
-            this.data.points[edge.i].x, this.data.points[edge.i].y, 1,
-            this.data.points[edge.j].x, this.data.points[edge.j].y, 1
+            points[a].x, points[a].y, 1,
+            points[b].x, points[b].y, 1
           ];
 
           const geometry = new LineGeometry().setPositions(coordinates);
@@ -183,7 +187,7 @@ export default {
       const vertices = [];
       const colors = [];
 
-      this.data.points.forEach((p, i) => {
+      points.forEach((p, i) => {
         vertices.push(new Vector3(p.x, p.y, 1));
         let color = hexToRgb(this.colorForItem(i)).map(c => c / 255)
         colors.push(...color)
@@ -196,8 +200,7 @@ export default {
 
       let material = new THREE.PointsMaterial({vertexColors: true, map: tex, alphaTest: 0.5, transparent: true});
       material.size = (this.maxX - this.minX) / width * 10;
-      const points = new THREE.Points(geometry, material);
-      allObjects.add(points);
+      allObjects.add(new THREE.Points(geometry, material));
 
 
       scene.add(allObjects);

@@ -24,7 +24,7 @@
           direction="horizontal"
       >
         <v-tab prepend-icon="mdi-information" text="Details" value="details"></v-tab>
-        <v-tab prepend-icon="mdi-gesture-tap" text="Interactive Visualization" value="visualization"></v-tab>
+        <v-tab prepend-icon="mdi-gesture-tap" text="Interactive Visualization" value="visualization" v-if="instance.raw"></v-tab>
         <v-tab v-if="solutions.length > 0" prepend-icon="mdi-file-compare" text="Solutions" value="solutions"></v-tab>
       </v-tabs>
 
@@ -70,12 +70,15 @@
           </v-card>
         </v-tabs-window-item>
 
-        <v-tabs-window-item value="visualization">
+        <v-tabs-window-item value="visualization" v-if="instance.raw">
           <v-card flat>
             <v-card-text>
               <MaximumPolygonPackingVisualization
                   :url="service.getInstanceRawUrl(instance.uid)"
                   v-if="isMaximumPolygonPacking"/>
+              <MinimumConvexPartitionVisualization
+                  :url="service.getInstanceRawUrl(instance.uid)"
+                  v-if="isMinimumConvexPartition"/>
             </v-card-text>
           </v-card>
         </v-tabs-window-item>
@@ -96,7 +99,8 @@
                   <td>{{ solution.id }}</td>
                   <td>{{ solution.value }}</td>
                   <td class="text-end">
-                    <v-btn @click="solutionDialog = true; solutionToVisualize = solution;"
+                    <v-btn v-if="solution.raw"
+                           @click="solutionDialog = true; solutionToVisualize = solution;"
                            flat
                            icon="mdi-eye"></v-btn>
                     <v-btn :href="buildUrl(solution.path)"
@@ -120,6 +124,10 @@
                         :url="service.getInstanceRawUrl(instance.uid)"
                         :solution-url="service.getSolutionRawUrl(instance.uid, solutionToVisualize.id)"
                         v-if="isMaximumPolygonPacking"/>
+                    <MinimumConvexPartitionVisualization
+                        :url="service.getInstanceRawUrl(instance.uid)"
+                        :solution-url="service.getSolutionRawUrl(instance.uid, solutionToVisualize.id)"
+                        v-if="isMinimumConvexPartition"/>
                   </v-card-text>
 
                   <v-divider></v-divider>
@@ -150,6 +158,7 @@ import InstancesService from "@/services/instances.service";
 import UserService from "@/services/user.service";
 import MaximumPolygonPackingVisualization from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
 import Problems from "@/data/problems";
+import MinimumConvexPartitionVisualization from "@/components/visualizations/MinimumConvexPartitionVisualization.vue";
 
 export default {
   name: 'InstanceDetailView',
@@ -157,23 +166,35 @@ export default {
     isMaximumPolygonPacking() {
       return this.problem === Problems.MaximumPolygonPacking.id
     },
+    isMinimumConvexPartition() {
+      return this.problem === Problems.MinimumConvexPartition.id
+    },
     orderedSolutions() {
       if (this.isMaximumPolygonPacking) {
         return this.solutions.slice(0).sort((a, b) => b.value - a.value)
       }
       return this.solutions.slice(0).sort((a, b) => a.value - b.value)
     },
+    problemName(){
+      if(this.isMaximumPolygonPacking){
+        return Problems.MaximumPolygonPacking.name
+      } else if(this.isMinimumConvexPartition){
+        return Problems.MinimumConvexPartition.name
+      }
+      return "unknown"
+    },
     metaTable() {
-      let problemName = this.isMaximumPolygonPacking ? Problems.MaximumPolygonPacking.name : "unknown";
       return [
-        {key: 'Problem', value: problemName},
+        {key: 'Problem', value: this.problemName},
         {key: 'Name', value: this.instance.uid},
-        {key: '#items', value: this.instance.num_items},
+        this.isMaximumPolygonPacking?
+            {key: '#items', value: this.instance.num_items}: {key: '#points', value: this.instance.num_points}
+        ,
         {key: '#solutions', value: this.solutions.length},
       ]
     }
   },
-  components: {MaximumPolygonPackingVisualization},
+  components: {MinimumConvexPartitionVisualization, MaximumPolygonPackingVisualization},
   data: function () {
     return {
       tab: 'details',
@@ -198,6 +219,12 @@ export default {
 
     this.service.getSolutions(this.uid).then((response) => {
       this.solutions = response.data
+      if(this.isMinimumConvexPartition) {
+        this.solutions.forEach((solution) => {
+          solution.value = solution.num_edges;
+        })
+      }
+      console.log(this.solutions)
     }).catch((error) => {
       console.error(error)
     });

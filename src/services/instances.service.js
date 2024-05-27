@@ -11,6 +11,8 @@ class InstancesService {
     baseUrl() {
         if (this.problem === Problems.MaximumPolygonPacking.id) {
             return process.env.VUE_APP_API_URL + Problems.MaximumPolygonPacking.endpoint
+        } else if(this.problem === Problems.MinimumConvexPartition.id) {
+            return process.env.VUE_APP_API_URL + Problems.MinimumConvexPartition.endpoint
         }
 
         return process.env.VUE_APP_API_URL;
