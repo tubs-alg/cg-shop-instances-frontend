@@ -224,7 +224,6 @@ export default {
           solution.value = solution.num_edges;
         })
       }
-      console.log(this.solutions)
     }).catch((error) => {
       console.error(error)
     });

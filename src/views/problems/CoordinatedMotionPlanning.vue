@@ -1,0 +1,63 @@
+<script setup>
+import MathFormula from "@/components/math/MathFormula.vue";
+import CoordinatedMotionPlanningVisualization from "@/components/visualizations/CoordinatedMotionPlanningVisualization.vue";
+
+const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/instance/random_rcf2_x2871624_50/raw'
+</script>
+
+<template>
+  <v-container>
+
+    <h1 class="text-h3 mb-4">Coordinated Motion Planning</h1>
+
+
+    <p>
+      The Minimum Convex Partition Problem was part of the Second Computational Geometry Challenge,
+      and is discussed during CG Week in 2020.
+    </p>
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>Description</h3>
+    <p>
+      Given a set
+      <MathFormula formula="S"/>
+      of
+      <MathFormula formula="n"/>
+      points in the plane. The objective is to compute a plane graph with vertex set
+      <MathFormula formula="S"/>
+      (with each point in
+      <MathFormula formula="S"/>
+      having positive degree)
+      that partitions the convex hull of
+      <MathFormula formula="S"/>
+      into the smallest possible number of convex faces. Note that collinear points are allowed on face boundaries,
+      so all internal angles of a face are at most
+      <MathFormula formula="\pi"/>.
+      The complexity of this problem is still unknown, but approximation algorithms have been proposed; e.g., see
+      Christian Knauer and Andreas Spillner: Approximation Algorithms for the Minimum Convex Partition Problem, SWAT
+      2006, pp. 232-241.
+    </p>
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>Example Instance</h3>
+
+    <CoordinatedMotionPlanningVisualization
+        :url="exampleInstanceUrl"/>
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>References</h3>
+
+    <p>
+      [1] Christian Knauer and Andreas Spillner: Approximation Algorithms for the Minimum Convex Partition Problem, SWAT
+      2006, pp. 232-241.
+    </p>
+
+  </v-container>
+</template>
+
+<style scoped>
+
+</style>

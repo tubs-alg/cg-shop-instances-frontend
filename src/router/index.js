@@ -31,6 +31,11 @@ const routes = [
     path: '/mcp',
     name: 'mcp',
     component: () => import('../views/problems/MinimumConvexPartition.vue')
+  },
+  {
+    path: '/cmp',
+    name: 'cmp',
+    component: () => import('../views/problems/CoordinatedMotionPlanning.vue')
   }
 ]
 

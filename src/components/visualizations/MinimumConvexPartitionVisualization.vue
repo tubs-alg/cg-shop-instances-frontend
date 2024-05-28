@@ -26,18 +26,16 @@
 
 <script>
 import * as THREE from 'three';
-import {CSS2DObject, CSS2DRenderer, Line2, LineGeometry, LineMaterial, OrbitControls} from "three/addons";
+import {Line2, LineGeometry, LineMaterial, OrbitControls} from "three/addons";
 import axios from "axios";
-import {Raycaster, Vector2, Vector3} from "three";
+import {Vector3} from "three";
+
 import {
   polygonFromCoordinates,
   hexToRgb,
-  shiftCoordinates, fitCameraToObject
+  fitCameraToObject
 } from "@/lib/visualization/threejs_helper";
 import {createColors, rgbHex} from 'color-map'
-
-import example from "@/assets/uniform-0001000-2.instance.json"
-import solution from "@/assets/uniform-0001000-2.json"
 
 
 export default {

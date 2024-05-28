@@ -12,6 +12,7 @@
     "@vue/compiler-sfc": "^3.4.27",
     "axios": "^1.6.8",
     "color-map": "^2.0.6",
+    "colormap": "^2.3.2",
     "core-js": "^3.8.3",
     "three": "^0.164.1",
     "vue": "^3.4.15",
