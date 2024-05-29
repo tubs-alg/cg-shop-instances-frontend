@@ -28,6 +28,7 @@ import RangeSliderFilters from "@/components/instances/filters/RangeSliderFilter
           ></v-combobox>
 
           <RangeSliderFilters :fields="problemData['instance_range_query_fields']"
+                              :problemConfig="problemConfig"
                               ref="filterComponent"
                               @change="filtersChanged"/>
 

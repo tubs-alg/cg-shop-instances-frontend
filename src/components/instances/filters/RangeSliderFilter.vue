@@ -1,6 +1,6 @@
 <template>
 
-  <v-range-slider :label="field.field_name"
+  <v-range-slider :label="problemConfig.labels[field.field_name]? problemConfig.labels[field.field_name] : field.field_name"
                   class="mt-3"
                   :step="1"
                   v-model="this.values[field.field_name]"
@@ -16,7 +16,8 @@
 export default {
   name: 'RangeSliderFilters',
   props: {
-    fields: Object
+    fields: Object,
+    problemConfig: Object
   },
   emits: ['change'],
   watch: {

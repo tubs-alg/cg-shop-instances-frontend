@@ -6,7 +6,7 @@ const Problems = {
         minimization: false,
         visualizationComponent: "MaximumPolygonPackingVisualization",
         labels: {
-            "num_items": "Items",
+            "num_items": "items",
         },
         instanceCardAttributes: ["num_items"],
     },
@@ -17,8 +17,8 @@ const Problems = {
         minimization: true,
         visualizationComponent: "MinimumConvexPartitionVisualization",
         labels: {
-            "num_points": "Points",
-            "num_triangs": "Triangles",
+            "num_points": "points",
+            "num_triangs": "triangles",
         },
         instanceCardAttributes: ["num_points", "num_triangs"]
     },
@@ -28,8 +28,8 @@ const Problems = {
         id: "mpsp",
         minimization: true,
         labels: {
-            "num_points": "Points",
-            "num_edges": "Edges",
+            "num_points": "points",
+            "num_edges": "edges",
         },
         instanceCardAttributes: ["num_points", "num_edges"]
     },
@@ -39,8 +39,8 @@ const Problems = {
         id: "mcpc",
         minimization: true,
         labels: {
-            "num_points": "Points",
-            "num_holes": "Holes",
+            "num_points": "points",
+            "num_holes": "holes",
         },
         instanceCardAttributes: ["num_points", "num_holes"]
     }
