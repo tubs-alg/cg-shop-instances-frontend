@@ -11,6 +11,12 @@
         v-if="data === null"
     ></v-progress-circular>
 
+    <div class="text-end mb-1">
+      <v-btn-toggle v-model="showFootprints" variant="outlined" rounded="rounded-xl">
+        <v-btn icon="mdi-foot-print" :value="true"></v-btn>
+      </v-btn-toggle>
+    </div>
+
     <div class="position-relative" :id="sceneContainerId">
       <div :id="sceneId"></div>
     </div>
@@ -62,8 +68,24 @@ export default {
       this.colorSchemeChanged = true;
     },
     animationStep() {
-      window.dispatchEvent(new Event('robot-position-update'))
-      //console.log(this.robotPositions.geometry.attributes.positions);
+      this.updateRobotPositions();
+    },
+    showFootprints(newValue, oldValue) {
+      if (newValue === true) {
+        this.robots.forEach((r, i) => {
+          if (i > 0) {
+            r.visible = true;
+          }
+        });
+
+        this.updateRobotPositions(true);
+      } else {
+        this.robots.forEach((r, i) => {
+          if (i > 0) {
+            r.visible = false;
+          }
+        });
+      }
     }
   },
   computed: {
@@ -105,22 +127,6 @@ export default {
 
       return positions;
     },
-    /*maxX() {
-      if (this.data === null) return 0;
-      return Math.max(...this.data.points.xs)
-    },
-    maxY() {
-      if (this.data === null) return 0;
-      return Math.max(...this.data.points.ys)
-    },
-    minX() {
-      if (this.data === null) return 0;
-      return Math.min(...this.data.points.xs)
-    },
-    minY() {
-      if (this.data === null) return 0;
-      return Math.min(...this.data.points.ys)
-    },*/
   },
   data() {
     return {
@@ -130,7 +136,15 @@ export default {
       robotPositions: null,
       data: null,
       sceneId: this.$.uid + '-scene',
-      sceneContainerId: this.$.uid + '-sceneContainer'
+      sceneContainerId: this.$.uid + '-sceneContainer',
+      robots: [],
+      needRenderUpdate: false,
+      showFootprints: false,
+      renderConfiguration: {
+        relativeTrailLength: 0.5,
+        nTrailRobots: 50,
+        trailBaseOpacity: 0.1,
+      }
     }
   },
   mounted() {
@@ -139,26 +153,6 @@ export default {
     this.initializeScene();
   },
   methods: {
-    addItem(coordinates, color, itemIdx = null) {
-      let mesh = polygonFromCoordinates(coordinates, color);
-
-      mesh.itemIdx = itemIdx;
-
-      if (itemIdx !== null) {
-        const value = this.data.items[itemIdx].value
-        mesh.label = "value: " + value
-      }
-
-      return mesh
-    },
-    coordinatesFromJson(item) {
-      return item.x.map((x, i) => {
-        return {
-          x: x,
-          y: item.y[i]
-        }
-      });
-    },
     colorForItem(i) {
       if (this.colorScheme === "default") {
         //let itemColors = ['#4694e6', '#3bd35d', '#e1413a', '#7241df', '#e3e131', '#21a39f']
@@ -176,6 +170,83 @@ export default {
         return rgbHex(rgbaRange[Math.floor((value - this.minValue) / (this.maxValue - this.minValue) * n)])
       }
     },
+    updateRobotPositions(forceNewPositions = false) {
+      if (this.robots.length === 0) return;
+
+      let positionAttr = "targetPosition"
+
+      if (forceNewPositions) {
+        positionAttr = "position"
+      }
+
+      this.robots.forEach((r, i) => {
+        if (i === 0) {
+          this.allPositions[this.animationStep].forEach((p, j) => {
+            r.geometry.attributes[positionAttr].array[j * 3] = p.x;
+            r.geometry.attributes[positionAttr].array[j * 3 + 1] = p.y;
+          });
+        } else if (this.showFootprints && this.animationStep > 0) {
+          // based on i, go to a position between the previous position and the target position
+
+          this.allPositions[this.animationStep].forEach((p, j) => {
+            const oldX = this.allPositions[this.animationStep - 1][j].x;
+            const oldY = this.allPositions[this.animationStep - 1][j].y;
+            const xDiff = (p.x - oldX);
+            const yDiff = (p.y - oldY);
+            r.geometry.attributes[positionAttr].array[j * 3] = oldX +
+                (1 - this.renderConfiguration.relativeTrailLength) * xDiff +
+                this.renderConfiguration.relativeTrailLength * xDiff * (i / this.robots.length);
+            r.geometry.attributes[positionAttr].array[j * 3 + 1] = oldY +
+                (1 - this.renderConfiguration.relativeTrailLength) * yDiff +
+                this.renderConfiguration.relativeTrailLength * yDiff * (i / this.robots.length);
+          });
+
+        }
+
+        if (forceNewPositions) {
+          r.geometry.attributes.position.needsUpdate = true;
+        }
+      });
+
+      if (!forceNewPositions) {
+        this.needRenderUpdate = true;
+      }
+    },
+    createRobotsAtStart(opacity = 1) {
+      const starts = this.data.starts.map((p) => {
+        return {x: p[0], y: p[1]}
+      });
+
+      let vertices = [];
+      let colors = [];
+
+      starts.forEach((p, i) => {
+        vertices.push(new Vector3(p.x, p.y, 1));
+        let color = hexToRgb(this.colorForItem(i)).map(c => c / 255)
+        colors.push(...color)
+      })
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      geometry.setAttribute('targetPosition', geometry.attributes.position.clone());
+
+      let robotTex = new THREE.TextureLoader().load(require("@/assets/circle_texture.png"));
+
+      if (opacity === 1) {
+        console.log("opacity 1", opacity)
+
+        robotTex = new THREE.TextureLoader().load(require("@/assets/circle_texture_border.png"));
+      }
+
+      let material = new THREE.PointsMaterial({
+        vertexColors: true,
+        map: robotTex,
+        transparent: true,
+        size: 1,
+        opacity: opacity
+      });
+      return new THREE.Points(geometry, material)
+    },
     initializeScene() {
       const width = document.getElementById(this.sceneId).offsetWidth;
       const height = 500;
@@ -190,10 +261,6 @@ export default {
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setSize(width, height);
       document.getElementById(this.sceneId).appendChild(renderer.domElement);
-
-      const starts = this.data.starts.map((p) => {
-        return {x: p[0], y: p[1]}
-      });
 
       const targets = this.data.targets.map((p) => {
         return {x: p[0], y: p[1]}
@@ -257,74 +324,56 @@ export default {
             map: targetTexture,
             size: 1,
             opacity: 1,
-
             transparent: true
           })
       ));
 
-      vertices = []
-      colors = []
+      for (let i = this.renderConfiguration.nTrailRobots - 1; i >= 0; i--) {
+        const robots = this.createRobotsAtStart(i === 0 ? 1 :
+            this.renderConfiguration.trailBaseOpacity * i / this.renderConfiguration.nTrailRobots);
+        if (i !== 0) {
+          robots.visible = false;
+        }
+        this.robots.push(robots)
+        allObjects.add(robots);
+      }
 
-      starts.forEach((p, i) => {
-        vertices.push(new Vector3(p.x, p.y, 1));
-        let color = hexToRgb(this.colorForItem(i)).map(c => c / 255)
-        colors.push(...color)
-      })
-
-      const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-      geometry.setAttribute('targetPosition', geometry.attributes.position.clone());
-
-      let robotTex = new THREE.TextureLoader().load(require("@/assets/circle_texture_border.png"));
-      let material = new THREE.PointsMaterial({
-        vertexColors: true,
-        map: robotTex,
-        transparent: true,
-        size: 1
-      });
-      const robots = new THREE.Points(geometry, material)
-      allObjects.add(robots);
+      this.robots = this.robots.reverse();
 
       scene.add(allObjects);
 
       fitCameraToObject(allObjects, camera, 3, controls);
       controls.update()
 
-      let needUpdate = false;
-
       renderer.setAnimationLoop(() => {
             controls.update()
 
-            if (needUpdate) {
+            if (this.needRenderUpdate) {
               let furthest = 0;
-              let positions = robots.geometry.attributes.position.array;
-              let targetPositions = robots.geometry.attributes.targetPosition.array;
-              for (let i = 0; i < positions.length; i++) {
-                const diff = (targetPositions[i] - positions[i]);
-                furthest = Math.max(furthest, Math.abs(diff))
-                positions[i] += diff * 0.1;
-              }
+
+              this.robots.forEach((r, i) => {
+                if (!this.showFootprints && i > 0) {
+                  return;
+                }
+
+                let positions = r.geometry.attributes.position.array;
+                let targetPositions = r.geometry.attributes.targetPosition.array;
+                for (let i = 0; i < positions.length; i++) {
+                  const diff = (targetPositions[i] - positions[i]);
+                  furthest = Math.max(furthest, Math.abs(diff))
+                  positions[i] += diff * 0.1;
+                }
+                r.geometry.attributes.position.needsUpdate = true;
+              });
 
               if (furthest < 0.01) {
-                needUpdate = false;
+                this.needRenderUpdate = false;
               }
-
-              robots.geometry.attributes.position.needsUpdate = true;
             }
 
             renderer.render(scene, camera);
           }
-      )
-      ;
-
-      window.addEventListener('robot-position-update', () => {
-        this.allPositions[this.animationStep].forEach((p, i) => {
-          robots.geometry.attributes.targetPosition.array[i * 3] = p.x;
-          robots.geometry.attributes.targetPosition.array[i * 3 + 1] = p.y;
-        });
-
-        needUpdate = true;
-      })
+      );
 
     }
   }
