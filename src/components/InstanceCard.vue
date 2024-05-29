@@ -21,7 +21,9 @@
     </v-card-title>
 
     <v-card-subtitle>
-      Size: {{ instance.num_items }}
+      <div v-for="(item, i) in instanceData" :key="i">
+        {{ item.label }}: {{ item.value }}
+      </div>
     </v-card-subtitle>
 
     <v-card-actions>
@@ -50,6 +52,7 @@
 
 <script>
 import UserService from '../services/user.service';
+import Problems from "@/data/problems";
 
 export default {
   name: "InstanceCard",
@@ -60,6 +63,20 @@ export default {
   computed: {
     favoriteClass() {
       return this.isFavorite ? (this.animate ? "heart animate" : "heart favorite") : "heart"
+    },
+    instanceData() {
+      let problem = Object.values(Problems).find((p) => p.id === this.problem);
+
+      if(problem) {
+        return problem.instanceCardAttributes.map((field) => {
+          return {
+            label: problem.labels[field],
+            value: this.instance[field]
+          }
+        })
+      }
+
+      return []
     }
   },
   data: (obj) => {

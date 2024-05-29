@@ -9,13 +9,12 @@ class InstancesService {
     }
 
     baseUrl() {
-        if (this.problem === Problems.MaximumPolygonPacking.id) {
-            return process.env.VUE_APP_API_URL + Problems.MaximumPolygonPacking.endpoint
-        } else if(this.problem === Problems.MinimumConvexPartition.id) {
-            return process.env.VUE_APP_API_URL + Problems.MinimumConvexPartition.endpoint
+        for (let key in Problems) {
+            if (Problems[key].id === this.problem) {
+                return process.env.VUE_APP_API_URL + Problems[key].endpoint
+            }
         }
-
-        return process.env.VUE_APP_API_URL;
+        throw new Error("Problem not found")
     }
 
     getProblem() {

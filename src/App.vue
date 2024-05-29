@@ -78,7 +78,7 @@ const showFooter = computed(() => {
     </v-app-bar>
 
     <v-main>
-      <router-view/>
+      <router-view :key="$route.fullPath"/>
 
       <v-footer class="d-block" v-if="showFooter">
 

@@ -1,5 +1,6 @@
 <script setup>
 import Problems from "@/data/problems";
+import RangeSliderFilters from "@/components/instances/filters/RangeSliderFilter.vue";
 </script>
 <template>
   <div class="search-area">
@@ -26,11 +27,9 @@ import Problems from "@/data/problems";
               variant="outlined"
           ></v-combobox>
 
-          <MaximumPolygonPackingFilters :data="problemData"
-                                        ref="filterComponent"
-                                        @filtersChanged="filtersChanged"
-                                        v-if="problem === Problems.MaximumPolygonPacking.id"/>
-
+          <RangeSliderFilters :fields="problemData['instance_range_query_fields']"
+                              ref="filterComponent"
+                              @change="filtersChanged"/>
 
           <v-expand-transition>
             <div class="text-end" v-if="showReload">
@@ -113,12 +112,10 @@ import Problems from "@/data/problems";
 <script>
 import InstanceCard from "@/components/InstanceCard.vue";
 import InstancesService from "@/services/instances.service";
-import MaximumPolygonPackingFilters from "@/components/instances/filters/MaximumPolygonPackingFilters.vue";
 
 export default {
   name: 'InstancesView',
   components: {
-    MaximumPolygonPackingFilters,
     InstanceCard
   },
   watch: {
@@ -136,25 +133,39 @@ export default {
     service() {
       return new InstancesService(this.problem)
     },
-    problemName() {
-      let problem = Object.keys(Problems).find((key) => {
-        return Problems[key].id === this.problem;
+    problemConfig() {
+      return Object.values(Problems).find((p) => {
+        return p.id === this.problem;
       });
-
-      if (problem) {
-        return Problems[problem].name;
+    },
+    problemName() {
+      if (this.problemConfig) {
+        return this.problemConfig.name;
       }
 
       return "Unknown problem"
+    },
+    sortOptions() {
+      let options = [];
+
+      if (this.problemData === null) {
+        return options;
+      }
+
+      this.problemData["instance_sort_fields"].forEach((field) => {
+        options.push("-" + field);
+        options.push(field);
+      })
+
+      return options
     }
   },
   data: function () {
     return {
       search: "",
       problem: this.$route.params.problem,
-      problemData: {},
+      problemData: null,
       instances: [],
-      sortOptions: ["-uid", "uid", "-size", "size"],
       sort: "uid",
       n: 0,
       limit: 10,
@@ -170,14 +181,18 @@ export default {
   },
   methods: {
     sortOptionTitle(option) {
-      const mappings = {
-        "-uid": "name",
-        "uid": "name",
-        "-size": "size",
-        "size": "size"
+      let value = option.value;
+      let prefix = ""
+      if(value.startsWith('-')) {
+        value = value.substring(1);
+        prefix = "-"
       }
 
-      return mappings[option.title];
+      if(!this.problemConfig.labels[value]) {
+        return option.value;
+      }
+
+      return prefix + this.problemConfig.labels[value];
     },
     sortOptionIcon(option) {
       // if option starts with - show an icon
