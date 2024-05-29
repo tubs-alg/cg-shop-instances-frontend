@@ -31,7 +31,6 @@ import axios from "axios";
 import {Vector3} from "three";
 
 import {
-  polygonFromCoordinates,
   hexToRgb,
   fitCameraToObject
 } from "@/lib/visualization/threejs_helper";
@@ -54,18 +53,10 @@ export default {
       if (this.data === null) return 0;
       return Math.max(...this.data.points.xs)
     },
-    maxY() {
-      if (this.data === null) return 0;
-      return Math.max(...this.data.points.ys)
-    },
     minX() {
       if (this.data === null) return 0;
       return Math.min(...this.data.points.xs)
-    },
-    minY() {
-      if (this.data === null) return 0;
-      return Math.min(...this.data.points.ys)
-    },
+    }
   },
   data() {
     return {
@@ -79,7 +70,6 @@ export default {
   mounted() {
     axios.get(this.url).then((response) => {
       this.data = response.data
-      console.log(this.data)
       if (this.solutionUrl) {
         axios.get(this.solutionUrl).then((response) => {
           this.data.solution = response.data
@@ -95,26 +85,6 @@ export default {
     });
   },
   methods: {
-    addItem(coordinates, color, itemIdx = null) {
-      let mesh = polygonFromCoordinates(coordinates, color);
-
-      mesh.itemIdx = itemIdx;
-
-      if (itemIdx !== null) {
-        const value = this.data.items[itemIdx].value
-        mesh.label = "value: " + value
-      }
-
-      return mesh
-    },
-    coordinatesFromJson(item) {
-      return item.x.map((x, i) => {
-        return {
-          x: x,
-          y: item.y[i]
-        }
-      });
-    },
     colorForItem(i) {
       if (this.colorScheme === "default") {
         let itemColors = ['#4694e6', '#3bd35d', '#e1413a', '#7241df',
@@ -158,8 +128,6 @@ export default {
 
       if (this.data.solution) {
 
-        console.log(this.data.solution)
-
         this.data.solution.edges.endpoints_a.forEach((a, i) => {
           const b = this.data.solution.edges.endpoints_b[i];
           const coordinates = [
@@ -196,9 +164,15 @@ export default {
 
       let tex = new THREE.TextureLoader().load(require("@/assets/circle_texture.png"));
 
-      let material = new THREE.PointsMaterial({vertexColors: true, map: tex, alphaTest: 0.5, transparent: true});
-      material.size = (this.maxX - this.minX) / width * 10;
-      allObjects.add(new THREE.Points(geometry, material));
+      let material = new THREE.PointsMaterial({
+        vertexColors: true,
+        map: tex,
+        size: 1,
+        sizeAttenuation: false,
+        alphaTest: 0.5,
+        transparent: true});
+      const pointsMesh = new THREE.Points(geometry, material);
+      allObjects.add(pointsMesh);
 
 
       scene.add(allObjects);
@@ -208,6 +182,9 @@ export default {
 
       renderer.setAnimationLoop(() => {
         controls.update()
+        let scaleVector = new THREE.Vector3();
+        pointsMesh.material.size =
+            scaleVector.subVectors(pointsMesh.position, camera.position).length() / width;
         renderer.render(scene, camera);
       });
 

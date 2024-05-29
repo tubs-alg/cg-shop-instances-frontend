@@ -2,7 +2,8 @@
 import MathFormula from "@/components/math/MathFormula.vue";
 import MinimumConvexPartitionVisualization from "@/components/visualizations/MinimumConvexPartitionVisualization.vue";
 
-const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/instance/random_rcf2_x2871624_50/raw'
+const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'min_conv_partition/instance/euro-night-0001000/raw'
+const exampleSolutionUrl = process.env.VUE_APP_API_URL + 'min_conv_partition/instances/euro-night-0001000/solutions/184/raw'
 </script>
 
 <template>
@@ -44,6 +45,7 @@ const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/insta
     <h3>Example Instance</h3>
 
     <MinimumConvexPartitionVisualization
+        :solution-url="exampleSolutionUrl"
         :url="exampleInstanceUrl"/>
 
     <v-divider class="my-5"></v-divider>
