@@ -13,7 +13,7 @@
 
     <div class="text-end mb-1">
       <v-btn-toggle v-model="showFootprints" variant="outlined" rounded="rounded-xl">
-        <v-btn icon="mdi-foot-print" :value="true"></v-btn>
+        <v-btn icon="mdi-shoe-print" :value="true"></v-btn>
       </v-btn-toggle>
     </div>
 
@@ -22,6 +22,8 @@
     </div>
 
     <v-slider
+        v-if="data !== null && data.solution !== null"
+        label="Solution Step"
         v-model="animationStep"
         :max="maxAnimationStep"
         :min="0"
@@ -40,18 +42,17 @@
 
 <script>
 import * as THREE from 'three';
-import {Line2, LineGeometry, LineMaterial, OrbitControls} from "three/addons";
+import {OrbitControls} from "three/addons";
 import axios from "axios";
 import {Vector3} from "three";
+import {throttle} from 'throttle-debounce';
 
 const colormap = require("colormap")
 
 import example from "@/assets/small_free_001_10x10_40_40.instance.json";
 import solution from "@/assets/small_free_001_10x10_40_40.json";
 
-
 import {
-  polygonFromCoordinates,
   hexToRgb,
   fitCameraToObject
 } from "@/lib/visualization/threejs_helper";
@@ -68,7 +69,7 @@ export default {
       this.colorSchemeChanged = true;
     },
     animationStep() {
-      this.updateRobotPositions();
+      this.throttledUpdateRobotPositions()
     },
     showFootprints(newValue, oldValue) {
       if (newValue === true) {
@@ -144,7 +145,8 @@ export default {
         relativeTrailLength: 0.5,
         nTrailRobots: 50,
         trailBaseOpacity: 0.1,
-      }
+      },
+      throttledUpdateRobotPositions: throttle(100, this.updateRobotPositions)
     }
   },
   mounted() {
@@ -233,8 +235,7 @@ export default {
       let robotTex = new THREE.TextureLoader().load(require("@/assets/circle_texture.png"));
 
       if (opacity === 1) {
-        console.log("opacity 1", opacity)
-
+        // Show a border for the primary robot.
         robotTex = new THREE.TextureLoader().load(require("@/assets/circle_texture_border.png"));
       }
 
@@ -275,33 +276,6 @@ export default {
       }
 
       let allObjects = new THREE.Group();
-
-      /*if (this.data.solution) {
-
-        console.log(this.data.solution)
-
-        this.data.solution.edges.endpoints_a.forEach((a, i) => {
-          const b = this.data.solution.edges.endpoints_b[i];
-          const coordinates = [
-            points[a].x, points[a].y, 1,
-            points[b].x, points[b].y, 1
-          ];
-
-          const geometry = new LineGeometry().setPositions(coordinates);
-
-          let matLine = new LineMaterial({
-            color: 0x000000,
-            linewidth: 1, // in world units with size attenuation, pixels otherwise,
-            resolution: new THREE.Vector2(width, height)
-          });
-
-          let line = new Line2(geometry, matLine);
-          line.computeLineDistances();
-          allObjects.add(line);
-
-        });
-
-      }*/
 
       let vertices = [];
       let colors = [];

@@ -1,6 +1,7 @@
 <script setup>
 import MathFormula from "@/components/math/MathFormula.vue";
-import CoordinatedMotionPlanningVisualization from "@/components/visualizations/CoordinatedMotionPlanningVisualization.vue";
+import CoordinatedMotionPlanningVisualization
+  from "@/components/visualizations/CoordinatedMotionPlanningVisualization.vue";
 
 const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/instance/random_rcf2_x2871624_50/raw'
 </script>
@@ -12,31 +13,59 @@ const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/insta
 
 
     <p>
-      The Minimum Convex Partition Problem was part of the Second Computational Geometry Challenge,
-      and is discussed during CG Week in 2020.
+      The Third Computational Geometry Challenge was on Coordinated Motion Planning,
+      as part of CG Week in Buffalo, USA, June
+      7-11, 2021.
+    </p>
+    <p>
+      As in previous years, the objective was be to compute good solutions to instances of a difficult geometric
+      optimization problem. The specific problem chosen for the 2021 Challenge is Coordinated Motion Planning, as
+      follows.
     </p>
 
     <v-divider class="my-5"></v-divider>
 
     <h3>Description</h3>
     <p>
-      Given a set
-      <MathFormula formula="S"/>
+      Given a set of
+      <MathFormula formula="n"/>
+      axis-aligned unit-square robots in the plane, a set
+      <MathFormula formula="S=\{s_1,\dots,s_n\}"/>
       of
       <MathFormula formula="n"/>
-      points in the plane. The objective is to compute a plane graph with vertex set
-      <MathFormula formula="S"/>
-      (with each point in
-      <MathFormula formula="S"/>
-      having positive degree)
-      that partitions the convex hull of
-      <MathFormula formula="S"/>
-      into the smallest possible number of convex faces. Note that collinear points are allowed on face boundaries,
-      so all internal angles of a face are at most
-      <MathFormula formula="\pi"/>.
-      The complexity of this problem is still unknown, but approximation algorithms have been proposed; e.g., see
-      Christian Knauer and Andreas Spillner: Approximation Algorithms for the Minimum Convex Partition Problem, SWAT
-      2006, pp. 232-241.
+      distinct start pixels (unit squares) of the integer grid, and a set
+      <MathFormula formula="T=\{t_1,\dots,t_n\}"/>
+      of
+      <MathFormula formula="n"/>
+      distinct target pixels of the integer grid. During each unit of time, each robot can move (at unit speed) in a
+      direction (north, south, east or west) to an adjacent pixel, provided the robot remains disjoint from all other
+      robots during the motions.
+
+      This condition has to be satisfied at all times, not just when robots are at pixel positions. For example, if
+      there are robots at each of the two adjacent pixels
+      <MathFormula formula="(x,y)"/>
+      and
+      <MathFormula formula="(x+1,y)"/>
+      , then the robot at
+      <MathFormula formula="(x,y)"/>
+      can move east into position
+      <MathFormula formula="(x+1,y)"/>
+      only if the robot at
+      <MathFormula formula="(x+1,y)"/>
+      moves east at the same time, so that the two robots remain in contact, during the movement, but never overlap.
+
+      In addition, for some instances, there may be given a set of obstacles, consisting of a number of stationary,
+      blocked pixels that cannot be used by robots at any time.
+
+      The task is to compute a set of feasible trajectories for all
+      <MathFormula formula="n"/>
+      robots, with the trajectory for robot
+      <MathFormula formula="i"/>
+      moving it from
+      <MathFormula formula="s_i"/>
+      to
+      <MathFormula formula="t_i"/>
+      .
     </p>
 
     <v-divider class="my-5"></v-divider>
@@ -51,8 +80,15 @@ const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/insta
     <h3>References</h3>
 
     <p>
-      [1] Christian Knauer and Andreas Spillner: Approximation Algorithms for the Minimum Convex Partition Problem, SWAT
-      2006, pp. 232-241.
+      [1]  E.D. Demaine, S.P. Fekete, P. Keldenich, H. Meijer, C. Scheffer.
+      Coordinated Motion Planning: Reconfiguring a Swarm of Labeled Robots with Bounded Stretch.
+      SIAM Journal on Computing, Vol. 48, No. 6, pp. 1727-1762, 2019.
+    </p>
+
+    <p>
+      [2] A.T. Becker, S.P. Fekete, P. Keldenich, M. Konitzny, L. Lin, C. Scheffer.
+      Coordinated Motion Planning: The Video.
+      In: Proceedings of the 34th International Symposium on Computational Geometry (SoCG 2018), pp. 74:1-74:6.
     </p>
 
   </v-container>
