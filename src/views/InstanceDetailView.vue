@@ -153,6 +153,7 @@ import UserService from "@/services/user.service";
 import MaximumPolygonPackingVisualization from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
 import MinimumConvexPartitionVisualization from "@/components/visualizations/MinimumConvexPartitionVisualization.vue";
 import MinimumSubgraphPartitionVisualization from "@/components/visualizations/MinimumSubgraphPartitionVisualization.vue";
+import MinimumCoverageByConvexPolygonsVisualization from "@/components/visualizations/MinimumCoverageByConvexPolygonsVisualization.vue";
 import Problems from "@/data/problems";
 
 export default {
@@ -193,7 +194,8 @@ export default {
   components: {
     MinimumConvexPartitionVisualization,
     MaximumPolygonPackingVisualization,
-    MinimumSubgraphPartitionVisualization
+    MinimumSubgraphPartitionVisualization,
+    MinimumCoverageByConvexPolygonsVisualization
   },
   data: function () {
     return {

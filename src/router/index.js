@@ -41,6 +41,11 @@ const routes = [
     path: '/mpsp',
     name: 'mpsp',
     component: () => import('../views/problems/MinimumSubgraphPartition.vue')
+  },
+  {
+    path: '/mcpc',
+    name: 'mcpc',
+    component: () => import('../views/problems/MinimumCoverageByConvexPolygons.vue')
   }
 ]
 

@@ -35,9 +35,10 @@ const Problems = {
         instanceCardAttributes: ["num_points", "num_edges"]
     },
     MinimumConvexPolygonCoverage: {
-        name: "Minimum Convex Polygon Coverage",
+        name: "Minimum Coverage by Convex Polygons",
         endpoint: "min_conv_poly_coverage/",
         id: "mcpc",
+        visualizationComponent: "MinimumCoverageByConvexPolygonsVisualization",
         minimization: true,
         labels: {
             "num_points": "points",

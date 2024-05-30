@@ -21,7 +21,7 @@ function polygonBoundaryFromCoordinates(coordinates, color) {
     const edgesGeometry = new THREE.EdgesGeometry(polygonGeometryFromCoordinates(coordinates))
     return new THREE.LineSegments(edgesGeometry,
         new THREE.LineBasicMaterial({
-            color: color
+            color: color,
         }))
 }
 
