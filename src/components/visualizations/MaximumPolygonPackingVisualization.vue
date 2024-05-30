@@ -8,10 +8,10 @@
     <v-progress-circular
         indeterminate
         color="primary"
-        v-if="data === null"
+        v-if="!rendered"
     ></v-progress-circular>
 
-    <div class="text-end mb-1">
+    <div class="text-end mb-1" v-if="rendered">
       <v-btn-toggle
           v-model="colorScheme"
           variant="outlined"
@@ -27,7 +27,7 @@
     </div>
 
 
-    <div v-if="data !==null" class="text-center mt-1 text-sm-caption">
+    <div v-if="rendered" class="text-center mt-1 text-sm-caption">
       Controls: Mouse wheel to zoom, Mouse click to pan
     </div>
   </v-container>
@@ -71,6 +71,9 @@ export default {
   },
   data() {
     return {
+      rendered: false,
+      renderer: null,
+      labelRenderer: null,
       colorScheme: "default",
       colorSchemeChanged: false,
       data: null,
@@ -169,15 +172,13 @@ export default {
       }
     },
     setupLabelRenderer(width, height) {
-      const labelRenderer = new CSS2DRenderer();
-      labelRenderer.setSize(width, height);
-      labelRenderer.domElement.style.position = 'absolute';
-      labelRenderer.domElement.style.top = '0px';
-      labelRenderer.domElement.style.left = '0px';
-      labelRenderer.domElement.style.pointerEvents = 'none';
-      document.getElementById(this.sceneContainerId).appendChild(labelRenderer.domElement);
-
-      return labelRenderer;
+      this.labelRenderer = new CSS2DRenderer();
+      this.labelRenderer.setSize(width, height);
+      this.labelRenderer.domElement.style.position = 'absolute';
+      this.labelRenderer.domElement.style.top = '0px';
+      this.labelRenderer.domElement.style.left = '0px';
+      this.labelRenderer.domElement.style.pointerEvents = 'none';
+      document.getElementById(this.sceneContainerId).appendChild(this.labelRenderer.domElement);
     },
     setupLabel() {
       const labelDiv = document.createElement('div');
@@ -196,16 +197,16 @@ export default {
 
       const camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
 
-      const renderer = new THREE.WebGLRenderer({antialias: true});
-      renderer.setPixelRatio(window.devicePixelRatio)
-      renderer.setSize(width, height);
-      document.getElementById(this.sceneId).appendChild(renderer.domElement);
+      this.renderer = new THREE.WebGLRenderer({antialias: true});
+      this.renderer.setPixelRatio(window.devicePixelRatio)
+      this.renderer.setSize(width, height);
+      document.getElementById(this.sceneId).appendChild(this.renderer.domElement);
 
-      const labelRenderer = this.setupLabelRenderer(width, height);
+      this.setupLabelRenderer(width, height);
       let label = this.setupLabel();
       scene.add(label);
 
-      const controls = new OrbitControls(camera, renderer.domElement);
+      const controls = new OrbitControls(camera, this.renderer.domElement);
       controls.enableRotate = false;
       controls.mouseButtons = {
         LEFT: THREE.MOUSE.PAN,
@@ -261,7 +262,7 @@ export default {
         }
       });
 
-      renderer.setAnimationLoop(() => {
+      this.renderer.setAnimationLoop(() => {
         controls.update()
 
         if (requireHoverUpdate) {
@@ -302,11 +303,14 @@ export default {
           this.colorSchemeChanged = false;
         }
 
-        renderer.render(scene, camera);
-        labelRenderer.render(scene, camera);
+        this.renderer.render(scene, camera);
+        this.labelRenderer.render(scene, camera);
+        this.rendered = true;
       });
-
     }
+  },
+  unmounted() {
+    if (this.renderer) this.renderer.dispose();
   }
 }
 

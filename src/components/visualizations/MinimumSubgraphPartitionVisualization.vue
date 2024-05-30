@@ -38,7 +38,7 @@ import {createColors, rgbHex} from 'color-map'
 
 
 export default {
-  name: "MinimumConvexPartitionVisualization",
+  name: "MinimumSubgraphPartitionVisualization",
   props: {
     url: String,
     solutionUrl: String
@@ -46,10 +46,10 @@ export default {
   data() {
     return {
       rendered: false,
-      renderer: null,
       data: null,
       sceneId: this.$.uid + '-scene',
-      sceneContainerId: this.$.uid + '-sceneContainer'
+      sceneContainerId: this.$.uid + '-sceneContainer',
+      renderer: null
     }
   },
   mounted() {
@@ -104,26 +104,27 @@ export default {
 
       let allObjects = new THREE.Group();
 
-      if (this.data.solution) {
+      console.log(this.data)
 
-        let matLine = new LineMaterial({
-          color: 0x000000,
-          linewidth: 1, // in world units with size attenuation, pixels otherwise,
-          resolution: new THREE.Vector2(width, height)
-        });
 
-        this.data.solution.edges.endpoints_a.forEach((a, i) => {
-          const b = this.data.solution.edges.endpoints_b[i];
-          const coordinates = [
-            points[a].x, points[a].y, 1,
-            points[b].x, points[b].y, 1
-          ];
+      let matLine = new LineMaterial({
+        color: 0x000000,
+        opacity: 0.1,
+        linewidth: 1, // in world units with size attenuation, pixels otherwise,
+        resolution: new THREE.Vector2(width, height)
+      });
 
-          const geometry = new LineGeometry().setPositions(coordinates);
-          allObjects.add(new Line2(geometry, matLine));
-        });
+      this.data.edges.start.forEach((a, i) => {
+        const b = this.data.edges.end[i];
+        const coordinates = [
+          points[a].x, points[a].y, 1,
+          points[b].x, points[b].y, 1
+        ];
 
-      }
+        const geometry = new LineGeometry().setPositions(coordinates);
+        allObjects.add(new Line2(geometry, matLine));
+      });
+
       const vertices = [];
       const colors = [];
 
@@ -163,11 +164,10 @@ export default {
         this.renderer.render(scene, camera);
         this.rendered = true;
       });
-
     }
   },
   unmounted() {
-    if (this.renderer) this.renderer.dispose();
+    if(this.renderer) this.renderer.dispose();
   }
 }
 

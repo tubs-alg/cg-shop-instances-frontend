@@ -8,10 +8,10 @@
     <v-progress-circular
         indeterminate
         color="primary"
-        v-if="data === null"
+        v-if="!rendered"
     ></v-progress-circular>
 
-    <div class="text-end mb-1">
+    <div class="text-end mb-1" v-if="rendered">
       <v-btn-toggle v-model="showFootprints" variant="outlined" rounded="rounded-xl">
         <v-btn icon="mdi-shoe-print" :value="true"></v-btn>
       </v-btn-toggle>
@@ -22,7 +22,7 @@
     </div>
 
     <v-slider
-        v-if="data !== null && data.solution !== null"
+        v-if="rendered && data.solution !== null"
         label="Solution Step"
         v-model="animationStep"
         :max="maxAnimationStep"
@@ -32,7 +32,7 @@
     ></v-slider>
 
 
-    <div v-if="data !==null" class="text-center mt-1 text-sm-caption">
+    <div v-if="rendered" class="text-center mt-1 text-sm-caption">
       Controls: Mouse wheel to zoom, Mouse click to pan, Slider to animate
     </div>
   </v-container>
@@ -65,9 +65,6 @@ export default {
     solutionUrl: String
   },
   watch: {
-    colorScheme() {
-      this.colorSchemeChanged = true;
-    },
     animationStep() {
       this.throttledUpdateRobotPositions()
     },
@@ -131,9 +128,9 @@ export default {
   },
   data() {
     return {
+      rendered: false,
+      renderer: null,
       animationStep: 0,
-      colorScheme: "default",
-      colorSchemeChanged: false,
       robotPositions: null,
       data: null,
       sceneId: this.$.uid + '-scene',
@@ -156,21 +153,13 @@ export default {
   },
   methods: {
     colorForItem(i) {
-      if (this.colorScheme === "default") {
-        //let itemColors = ['#4694e6', '#3bd35d', '#e1413a', '#7241df', '#e3e131', '#21a39f']
-        let itemColors = colormap({
-          colormap: 'jet',
-          nshades: this.data.starts.length,
-          format: 'hex',
-          alpha: 1
-        });
-        return itemColors[i % itemColors.length]
-      } else {
-        const n = 72;
-        const rgbaRange = createColors([150, 150, 150], [186, 100, 100], n + 1)
-        const value = this.data.items[i].value
-        return rgbHex(rgbaRange[Math.floor((value - this.minValue) / (this.maxValue - this.minValue) * n)])
-      }
+      let itemColors = colormap({
+        colormap: 'jet',
+        nshades: this.data.starts.length,
+        format: 'hex',
+        alpha: 1
+      });
+      return itemColors[i % itemColors.length]
     },
     updateRobotPositions(forceNewPositions = false) {
       if (this.robots.length === 0) return;
@@ -258,16 +247,16 @@ export default {
 
       const camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
 
-      const renderer = new THREE.WebGLRenderer({antialias: true});
-      renderer.setPixelRatio(window.devicePixelRatio)
-      renderer.setSize(width, height);
-      document.getElementById(this.sceneId).appendChild(renderer.domElement);
+      this.renderer = new THREE.WebGLRenderer({antialias: true});
+      this.renderer.setPixelRatio(window.devicePixelRatio)
+      this.renderer.setSize(width, height);
+      document.getElementById(this.sceneId).appendChild(this.renderer.domElement);
 
       const targets = this.data.targets.map((p) => {
         return {x: p[0], y: p[1]}
       });
 
-      const controls = new OrbitControls(camera, renderer.domElement);
+      const controls = new OrbitControls(camera, this.renderer.domElement);
       controls.enableRotate = false;
       controls.mouseButtons = {
         LEFT: THREE.MOUSE.PAN,
@@ -319,9 +308,8 @@ export default {
       fitCameraToObject(allObjects, camera, 3, controls);
       controls.update()
 
-      renderer.setAnimationLoop(() => {
+      this.renderer.setAnimationLoop(() => {
             controls.update()
-
             if (this.needRenderUpdate) {
               let furthest = 0;
 
@@ -345,11 +333,15 @@ export default {
               }
             }
 
-            renderer.render(scene, camera);
+            this.renderer.render(scene, camera);
+            this.rendered = true;
           }
       );
 
     }
+  },
+  unmounted() {
+    if (this.renderer) this.renderer.dispose();
   }
 }
 

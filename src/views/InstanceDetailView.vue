@@ -75,6 +75,7 @@
           <v-card flat>
             <v-card-text>
               <component :is="problemConfig.visualizationComponent"
+                         v-if="problemConfig.visualizationComponent"
                          :url="service.getInstanceRawUrl(instance.uid)"/>
             </v-card-text>
           </v-card>
@@ -118,6 +119,7 @@
                         :title="'Solution ' + solutionToVisualize.id + ' with value ' + solutionToVisualize.value">
                   <v-card-text>
                     <component :is="problemConfig.visualizationComponent"
+                               v-if="problemConfig.visualizationComponent"
                                :url="service.getInstanceRawUrl(instance.uid)"
                                :solution-url="service.getSolutionRawUrl(instance.uid, solutionToVisualize.id)"/>
                   </v-card-text>
@@ -150,6 +152,7 @@ import InstancesService from "@/services/instances.service";
 import UserService from "@/services/user.service";
 import MaximumPolygonPackingVisualization from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
 import MinimumConvexPartitionVisualization from "@/components/visualizations/MinimumConvexPartitionVisualization.vue";
+import MinimumSubgraphPartitionVisualization from "@/components/visualizations/MinimumSubgraphPartitionVisualization.vue";
 import Problems from "@/data/problems";
 
 export default {
@@ -187,7 +190,11 @@ export default {
       return meta
     }
   },
-  components: {MinimumConvexPartitionVisualization, MaximumPolygonPackingVisualization},
+  components: {
+    MinimumConvexPartitionVisualization,
+    MaximumPolygonPackingVisualization,
+    MinimumSubgraphPartitionVisualization
+  },
   data: function () {
     return {
       tab: 'details',

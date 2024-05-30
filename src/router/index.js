@@ -36,6 +36,11 @@ const routes = [
     path: '/cmp',
     name: 'cmp',
     component: () => import('../views/problems/CoordinatedMotionPlanning.vue')
+  },
+  {
+    path: '/mpsp',
+    name: 'mpsp',
+    component: () => import('../views/problems/MinimumSubgraphPartition.vue')
   }
 ]
 

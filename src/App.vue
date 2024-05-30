@@ -17,6 +17,8 @@ const showFooter = computed(() => {
   return router.currentRoute.value.name === "home"
 });
 
+const apiUrl = process.env.VUE_APP_API_URL + 'docs'
+
 </script>
 
 <template>
@@ -62,7 +64,7 @@ const showFooter = computed(() => {
         </v-list>
       </v-menu>
 
-      <v-btn :color="transparentAppBar?'white' : 'black'">
+      <v-btn :color="transparentAppBar?'white' : 'black'" :href="apiUrl">
         <v-icon class="me-1">mdi-code-braces-box</v-icon>
         Api
       </v-btn>

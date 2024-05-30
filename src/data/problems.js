@@ -23,9 +23,10 @@ const Problems = {
         instanceCardAttributes: ["num_points", "num_triangs"]
     },
     MinimumPlaneSubgraphPartition: {
-        name: "Minimum Plane Subgraph Partition",
+        name: "Minimum Partition into Plane Subgraphs",
         endpoint: "min_plane_subgraph_partition/",
         id: "mpsp",
+        visualizationComponent: "MinimumSubgraphPartitionVisualization",
         minimization: true,
         labels: {
             "num_points": "points",
