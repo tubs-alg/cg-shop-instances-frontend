@@ -61,84 +61,40 @@
         <h2 class="text-h3 font-weight-light mb-10 text-center">
           Our Problem Collection
         </h2>
-        <v-row>
-          <v-col lg="6" md="6" cols="12">
+        <v-row justify="center">
+          <v-col lg="4" md="6" cols="12">
             <ProblemCard link="/mpp" title="Maximum Polygon Packing"
                          :img="require('@/assets/problems/mpp.png')"
                          description="Optimal packing a set of objects into a given container."/>
           </v-col>
-          <v-col lg="6" md="6" cols="12">
+          <v-col lg="4" md="6" cols="12">
             <ProblemCard link="/mcp" title="Minimum Convex Partition"
                          :img="require('@/assets/problems/mcp.png')"
                          description="Partition a point set into a smallest set of convex faces."/>
           </v-col>
 
+          <v-col lg="4" md="6" cols="12">
+            <ProblemCard link="/mapf" title="Multi Agent Path Finding"
+                         :img="require('@/assets/problems/mapf.png')"
+                         description="Compute a set of feasible trajectories a given set of robots and targets."/>
+          </v-col>
+
+          <v-col lg="4" md="6" cols="12">
+            <ProblemCard link="/mcpc" title="Minimum Coverage by Convex Polygons"
+                         :img="require('@/assets/problems/mcpc.png')"
+                         description="Compute a minimum coverage of a polygon by convex polygons."/>
+          </v-col>
+
+          <v-col lg="4" md="6" cols="12">
+            <ProblemCard link="/mpsp" title="Minimum Partition into Plane Subgraphs"
+                         :img="require('@/assets/problems/mpsp.png')"
+                         description="Partition a graph into minimum plane subgraphs."/>
+          </v-col>
         </v-row>
 
       </v-container>
   </div>
 
-  <div class="py-15">
-
-    <v-container>
-      <h3 class="text-h3 mb-10 font-weight-light text-center">Roadmap</h3>
-
-      <v-row>
-        <v-col lg="4" class="text-center">
-          <v-card rounded="circle" height="64" width="64" class="mx-auto  mb-4" color="pink-lighten-1">
-            <v-icon size="64">mdi-flag-checkered</v-icon>
-          </v-card>
-          <h2 class="mt-n1 headline font-weight-light mb-4">
-            Our goal
-          </h2>
-          <div>
-            The CG:SHOP Instances Collection (BIP) is a library of sample instances for geometric problems from various
-            sources and
-            of various types.
-            The main goal is to facilitate and encourage practical work on a wide range of geometric optimization
-            problems by
-            providing a large collection of challenges of self-refining difficulty.
-          </div>
-        </v-col>
-
-        <v-col lg="4" class="text-center">
-          <v-card rounded="circle" height="64" width="64" class="mx-auto  mb-4" color="primary">
-            <v-icon size="64">mdi-blur</v-icon>
-          </v-card>
-          <h2 class="mt-n1 headline font-weight-light mb-4">
-            Generators
-          </h2>
-          <div>
-            As part of BIP, we collect, grow and present a large collection of specific instances and
-            <a class="text-decoration-none" href="https://gitlab.ibr.cs.tu-bs.de/hip/hip-generators">instance
-              generators</a>.
-
-            We also accommodate the need for quality control by providing a spectrum of instance generators that allow
-            precise
-            reproduction, only based on compact generator seeds.
-          </div>
-        </v-col>
-        <v-col lg="4" class="text-center">
-          <v-card rounded="circle" height="64" width="64" class="mx-auto mb-4 pa-2" color="blue">
-            <v-icon size="48">mdi-share-variant</v-icon>
-          </v-card>
-          <h2 class="mt-n1 headline font-weight-light mb-4">
-            Sharing results
-          </h2>
-          <div>
-            Our platform also facilitates sharing and validating experimental achievements by allowing comparison and
-            reproduction of results, encouraging work on challenges and also helping researchers and developers to
-            connect and
-            collaborate, thus pushing the frontiers of solvable instances.
-            By competing and sharing results with the rest of the world, the ongoing work by researchers will make the
-            hard
-            and interesting instances for each problem emerge.
-          </div>
-        </v-col>
-      </v-row>
-
-    </v-container>
-  </div>
 </template>
 
 <script>

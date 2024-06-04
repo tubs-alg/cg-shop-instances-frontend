@@ -10,7 +10,7 @@
              width="150" cover></v-img>
     </v-card>
     <router-link :to="link" class="text-decoration-none text-base">
-      <h2 class="text-h5 mb-4 d-flex justify-center">
+      <h2 class="text-h5 mb-4 text-center">
         <span>{{ title }}</span>
       </h2>
     </router-link>

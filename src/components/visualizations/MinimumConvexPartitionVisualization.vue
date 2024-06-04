@@ -34,7 +34,6 @@ import {
   hexToRgb,
   fitCameraToObject
 } from "@/lib/visualization/threejs_helper";
-import {createColors, rgbHex} from 'color-map'
 
 
 export default {
