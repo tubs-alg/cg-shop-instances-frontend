@@ -45,6 +45,17 @@ const Problems = {
             "num_holes": "holes",
         },
         instanceCardAttributes: ["num_points", "num_holes"]
+    },
+    MultiAgentPathFinding: {
+        name: "Multi Agent Path Finding",
+        endpoint: "min_makespan_mapf/",
+        id: "mapf",
+        visualizationComponent: "MultiAgentPathFindingVisualization",
+        minimization: true,
+        labels: {
+
+        },
+        instanceCardAttributes: []
     }
 }
 export default Problems;

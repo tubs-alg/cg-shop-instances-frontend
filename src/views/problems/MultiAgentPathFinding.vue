@@ -1,25 +1,24 @@
 <script setup>
 import MathFormula from "@/components/math/MathFormula.vue";
-import CoordinatedMotionPlanningVisualization
-  from "@/components/visualizations/CoordinatedMotionPlanningVisualization.vue";
+import MultiAgentPathFindingVisualization from "@/components/visualizations/MultiAgentPathFindingVisualization.vue";
 
-const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/instance/random_rcf2_x2871624_50/raw'
+const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'min_makespan_mapf/instance/buffalo_000_25x25_20_63/raw'
 </script>
 
 <template>
   <v-container>
 
-    <h1 class="text-h3 mb-4">Coordinated Motion Planning</h1>
+    <h1 class="text-h3 mb-4">Multi Agent Path Finding</h1>
 
 
     <p>
-      The Third Computational Geometry Challenge was on Coordinated Motion Planning,
+      The Third Computational Geometry Challenge was on Multi Agent Path Finding,
       as part of CG Week in Buffalo, USA, June
       7-11, 2021.
     </p>
     <p>
       As in previous years, the objective was be to compute good solutions to instances of a difficult geometric
-      optimization problem. The specific problem chosen for the 2021 Challenge is Coordinated Motion Planning, as
+      optimization problem. The specific problem chosen for the 2021 Challenge is Multi Agent Path Finding, as
       follows.
     </p>
 
@@ -72,8 +71,7 @@ const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/insta
 
     <h3>Example Instance</h3>
 
-    <CoordinatedMotionPlanningVisualization
-        :url="exampleInstanceUrl"/>
+    <MultiAgentPathFindingVisualization :url="exampleInstanceUrl"/>
 
     <v-divider class="my-5"></v-divider>
 

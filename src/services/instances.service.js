@@ -50,8 +50,6 @@ class InstancesService {
             add_total_count: paginationData.add_total_count
         }
 
-        console.log(params)
-
         Object.keys(filters).forEach((key) => {
             params[key] = filters[key]
         });

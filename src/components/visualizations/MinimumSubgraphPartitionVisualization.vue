@@ -104,9 +104,6 @@ export default {
 
       let allObjects = new THREE.Group();
 
-      console.log(this.data)
-
-
       let matLine = new LineMaterial({
         color: 0x000000,
         opacity: 0.1,

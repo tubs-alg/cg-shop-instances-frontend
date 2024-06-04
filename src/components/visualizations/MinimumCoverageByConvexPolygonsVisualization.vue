@@ -28,7 +28,6 @@ import {
   polygonFromCoordinates, fitCameraToObject
 } from "@/lib/visualization/threejs_helper";
 
-import solution from "@/assets/1.json";
 import colormap from "colormap";
 
 
@@ -51,11 +50,10 @@ export default {
   mounted() {
     axios.get(this.url).then((response) => {
       this.data = response.data
-      this.data.solution = solution;
-      this.data.solution.polygons = this.shuffle(this.data.solution.polygons);
       if (this.solutionUrl) {
         axios.get(this.solutionUrl).then((response) => {
           this.data.solution = response.data
+          this.data.solution.polygons = this.shuffle(this.data.solution.polygons);
           this.initializeScene();
         }).catch((error) => {
           console.error(error)

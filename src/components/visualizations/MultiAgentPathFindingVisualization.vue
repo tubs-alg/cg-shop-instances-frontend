@@ -12,7 +12,7 @@
     ></v-progress-circular>
 
     <div class="text-end mb-1" v-if="rendered">
-      <v-btn-toggle v-model="showFootprints" variant="outlined" rounded="rounded-xl">
+      <v-btn-toggle v-model="showFootprints" v-if="data.solution" variant="outlined" rounded="rounded-xl">
         <v-btn icon="mdi-shoe-print" :value="true"></v-btn>
       </v-btn-toggle>
     </div>
@@ -22,7 +22,7 @@
     </div>
 
     <v-slider
-        v-if="rendered && data.solution !== null"
+        v-if="rendered && data.solution"
         label="Solution Step"
         v-model="animationStep"
         :max="maxAnimationStep"
@@ -43,23 +43,19 @@
 <script>
 import * as THREE from 'three';
 import {OrbitControls} from "three/addons";
-import axios from "axios";
 import {Vector3} from "three";
 import {throttle} from 'throttle-debounce';
 
 const colormap = require("colormap")
 
-import example from "@/assets/small_free_001_10x10_40_40.instance.json";
-import solution from "@/assets/small_free_001_10x10_40_40.json";
-
 import {
   hexToRgb,
   fitCameraToObject
 } from "@/lib/visualization/threejs_helper";
-import {createColors, rgbHex} from 'color-map'
+import axios from "axios";
 
 export default {
-  name: "CoordinatedMotionPlanningVisualization",
+  name: "MultiAgentPathFindingVisualization",
   props: {
     url: String,
     solutionUrl: String
@@ -88,14 +84,14 @@ export default {
   },
   computed: {
     maxAnimationStep() {
-      if (this.data === null || this.data.solution === null) return 0;
+      if (!this.data || !this.data.solution) return 0;
       return this.data.solution.steps.length
     },
     allPositions() {
       if (this.data === null || this.data.solution === null) return [];
 
-      let currentPositions = this.data.starts.map((p) => {
-        return {x: p[0], y: p[1]}
+      let currentPositions = this.data.start_points.xs.map((x, i) => {
+        return {x: x, y: this.data.start_points.ys[i]}
       });
 
       let positions = [currentPositions.slice(0)]
@@ -147,15 +143,27 @@ export default {
     }
   },
   mounted() {
-    this.data = example
-    this.data.solution = solution
-    this.initializeScene();
+    axios.get(this.url).then((response) => {
+      this.data = response.data
+      if (this.solutionUrl) {
+        axios.get(this.solutionUrl).then((response) => {
+          this.data.solution = response.data
+          this.initializeScene();
+        }).catch((error) => {
+          console.error(error)
+        });
+      } else {
+        this.initializeScene();
+      }
+    }).catch((error) => {
+      console.error(error)
+    });
   },
   methods: {
     colorForItem(i) {
       let itemColors = colormap({
         colormap: 'jet',
-        nshades: this.data.starts.length,
+        nshades: this.data.start_points.xs.length,
         format: 'hex',
         alpha: 1
       });
@@ -204,8 +212,8 @@ export default {
       }
     },
     createRobotsAtStart(opacity = 1) {
-      const starts = this.data.starts.map((p) => {
-        return {x: p[0], y: p[1]}
+      const starts = this.data.start_points.xs.map((x, i) => {
+        return {x: x, y: this.data.start_points.ys[i]}
       });
 
       let vertices = [];
@@ -252,8 +260,8 @@ export default {
       this.renderer.setSize(width, height);
       document.getElementById(this.sceneId).appendChild(this.renderer.domElement);
 
-      const targets = this.data.targets.map((p) => {
-        return {x: p[0], y: p[1]}
+      const targets = this.data.target_points.xs.map((x, i) => {
+        return {x: x, y: this.data.target_points.ys[i]}
       });
 
       const controls = new OrbitControls(camera, this.renderer.domElement);

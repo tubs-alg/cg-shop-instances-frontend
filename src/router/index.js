@@ -35,7 +35,7 @@ const routes = [
   {
     path: '/cmp',
     name: 'cmp',
-    component: () => import('../views/problems/CoordinatedMotionPlanning.vue')
+    component: () => import('../views/problems/MultiAgentPathFinding.vue')
   },
   {
     path: '/mpsp',
@@ -46,6 +46,11 @@ const routes = [
     path: '/mcpc',
     name: 'mcpc',
     component: () => import('../views/problems/MinimumCoverageByConvexPolygons.vue')
+  },
+  {
+    path: '/mapf',
+    name: 'mapf',
+    component: () => import('../views/problems/MultiAgentPathFinding.vue')
   }
 ]
 
