@@ -94,7 +94,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="solution in orderedSolutions" :key="solution.id">
-                  <td>{{ solution.id }}</td>
+                  <td>{{ solution.uid }}</td>
                   <td>{{ solution.value }}</td>
                   <td class="text-end">
                     <v-btn v-if="solution.raw"
@@ -121,7 +121,7 @@
                     <component :is="problemConfig.visualizationComponent"
                                v-if="problemConfig.visualizationComponent"
                                :url="service.getInstanceRawUrl(instance.uid)"
-                               :solution-url="service.getSolutionRawUrl(instance.uid, solutionToVisualize.id)"/>
+                               :solution-url="service.getSolutionRawUrl(instance.uid, solutionToVisualize.uid)"/>
                   </v-card-text>
 
                   <v-divider></v-divider>
