@@ -14,7 +14,7 @@ const showLogo = computed(() => {
 });
 
 const showFooter = computed(() => {
-  return router.currentRoute.value.name === "home"
+  return router.currentRoute.value.name !== "instances" && router.currentRoute.value.name !== "instance_detail"
 });
 
 const apiUrl = process.env.VUE_APP_API_URL + 'docs'
