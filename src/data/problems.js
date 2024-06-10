@@ -53,7 +53,8 @@ const Problems = {
         visualizationComponent: "MultiAgentPathFindingVisualization",
         minimization: true,
         labels: {
-
+            "num_agents": "agents",
+            "num_obstacles": "obstacles",
         },
         instanceCardAttributes: []
     }

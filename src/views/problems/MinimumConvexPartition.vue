@@ -1,9 +1,10 @@
 <script setup>
 import MathFormula from "@/components/math/MathFormula.vue";
 import MinimumConvexPartitionVisualization from "@/components/visualizations/MinimumConvexPartitionVisualization.vue";
+import urlJoin from "url-join";
 
-const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'min_conv_partition/instance/euro-night-0001000/raw'
-const exampleSolutionUrl = process.env.VUE_APP_API_URL + 'min_conv_partition/instances/euro-night-0001000/solutions/2be919d7be7914f6989deba46be4fcb2/raw'
+const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partition/instances/euro-night-0001000/raw')
+const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partition/instances/euro-night-0001000/solutions/2be919d7be7914f6989deba46be4fcb2/raw')
 </script>
 
 <template>

@@ -17,11 +17,11 @@ const routes = [
     name: 'instance_detail',
     component: () => import('../views/InstanceDetailView.vue')
   },
-  {
+  /*{
     path: '/favorites',
     name: 'favorites',
     component: () => import('../views/FavoritesView.vue')
-  },
+  },*/
   {
     path: '/mpp',
     name: 'mpp',

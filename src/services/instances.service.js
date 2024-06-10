@@ -22,7 +22,7 @@ class InstancesService {
     }
 
     getInstance(id) {
-        return axios.get(this.baseUrl() + "instance/" + id)
+        return axios.get(this.baseUrl() + "instances/" + id)
     }
 
     getSolutions(id) {
@@ -34,7 +34,7 @@ class InstancesService {
     }
 
     getInstanceRawUrl(id) {
-        return this.baseUrl() + "instance/" + id + "/raw";
+        return this.baseUrl() + "instances/" + id + "/raw";
     }
 
     getSolutionRawUrl(instanceId, solutionId) {

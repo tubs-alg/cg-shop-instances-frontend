@@ -33,7 +33,7 @@
         <v-tabs-window-item value="details">
           <v-card flat>
             <v-card-text>
-              <v-row align="center">
+              <v-row>
                 <v-col lg="6">
                   <v-table class="text-caption">
                     <thead>
@@ -58,11 +58,11 @@
                   </div>
 
                 </v-col>
-                <v-col lg="6">
-                  <vue-image-zoomer :regular="instance.image" click-zoom v-if="instance.image"/>
+                <v-col lg="6" align-self="center">
+                  <vue-image-zoomer :regular="buildUrl(instance.image)" click-zoom v-if="instance.image"/>
                   <div v-if="instance.image === null">
-                    <v-alert type="warning">
-                      No static visualization available
+                    <v-alert type="info">
+                      For this instance, there is no visualization available.
                     </v-alert>
                   </div>
                 </v-col>
@@ -156,6 +156,7 @@ import MinimumSubgraphPartitionVisualization from "@/components/visualizations/M
 import MinimumCoverageByConvexPolygonsVisualization from "@/components/visualizations/MinimumCoverageByConvexPolygonsVisualization.vue";
 import MultiAgentPathFindingVisualization from "@/components/visualizations/MultiAgentPathFindingVisualization.vue";
 import Problems from "@/data/problems";
+import urlJoin from 'url-join';
 
 export default {
   name: 'InstanceDetailView',
@@ -234,14 +235,7 @@ export default {
   },
   methods: {
     buildUrl(path) {
-      if (path === null) {
-        return null
-      }
-
-      if (path.startsWith('/')) {
-        path = path.substring(1)
-      }
-      return process.env.VUE_APP_API_URL + path
+      return urlJoin(process.env.VUE_APP_API_URL, path);
     },
     getBack() {
       this.$router.go(-1);

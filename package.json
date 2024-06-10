@@ -16,6 +16,7 @@
     "core-js": "^3.8.3",
     "three": "^0.164.1",
     "throttle-debounce": "^5.0.0",
+    "url-join": "^5.0.0",
     "vue": "^3.4.15",
     "vue-image-zoomer": "^2.2.3",
     "vue-router": "^4.0.3",

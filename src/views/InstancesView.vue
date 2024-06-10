@@ -97,7 +97,7 @@ import RangeSliderFilters from "@/components/instances/filters/RangeSliderFilter
     <v-container v-if="!currentlyReloading">
       <v-infinite-scroll @load="loadScroll" empty-text="No more instances available" :mode="scrollMode">
         <div class="d-flex flex-wrap">
-          <v-col v-for="instance in instances" :key="instance.id">
+          <v-col v-for="instance in instances" :key="instance.id" lg="3" md="4" cols="12">
             <v-slide-x-transition appear>
               <InstanceCard :instance="instance" v-show="true" :problem="problem"/>
             </v-slide-x-transition>
@@ -183,17 +183,16 @@ export default {
   methods: {
     sortOptionTitle(option) {
       let value = option.value;
-      let prefix = ""
+
       if(value.startsWith('-')) {
         value = value.substring(1);
-        prefix = "-"
       }
 
-      if(!this.problemConfig.labels[value]) {
-        return option.value;
+      if(this.problemConfig.labels[value] !== undefined) {
+        return this.problemConfig.labels[value];
       }
 
-      return prefix + this.problemConfig.labels[value];
+      return value;
     },
     sortOptionIcon(option) {
       // if option starts with - show an icon

@@ -1,11 +1,11 @@
 <script setup>
 import MathFormula from "@/components/math/MathFormula.vue";
-import MinimumConvexPartitionVisualization from "@/components/visualizations/MinimumConvexPartitionVisualization.vue";
 import MinimumSubgraphPartitionVisualization
   from "@/components/visualizations/MinimumSubgraphPartitionVisualization.vue";
+import urlJoin from "url-join";
 
-const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'min_plane_subgraph_partition/instance/reecn3382/raw'
-const exampleSolutionUrl = process.env.VUE_APP_API_URL + 'min_conv_partition/instances/euro-night-0001000/solutions/184/raw'
+
+const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_plane_subgraph_partition/instances/reecn3382/raw')
 </script>
 
 <template>

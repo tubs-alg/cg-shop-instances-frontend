@@ -1,8 +1,9 @@
 <script setup>
 import MathFormula from "@/components/math/MathFormula.vue";
 import MultiAgentPathFindingVisualization from "@/components/visualizations/MultiAgentPathFindingVisualization.vue";
+import urlJoin from "url-join";
 
-const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'min_makespan_mapf/instance/buffalo_000_25x25_20_63/raw'
+const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_mapf/instances/buffalo_000_25x25_20_63/raw')
 </script>
 
 <template>
@@ -78,7 +79,7 @@ const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'min_makespan_mapf/inst
     <h3>References</h3>
 
     <p>
-      [1]  E.D. Demaine, S.P. Fekete, P. Keldenich, H. Meijer, C. Scheffer.
+      [1] E.D. Demaine, S.P. Fekete, P. Keldenich, H. Meijer, C. Scheffer.
       Coordinated Motion Planning: Reconfiguring a Swarm of Labeled Robots with Bounded Stretch.
       SIAM Journal on Computing, Vol. 48, No. 6, pp. 1727-1762, 2019.
     </p>

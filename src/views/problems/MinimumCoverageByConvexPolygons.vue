@@ -2,8 +2,9 @@
 import MathFormula from "@/components/math/MathFormula.vue";
 import MinimumCoverageByConvexPolygonsVisualization
   from "@/components/visualizations/MinimumCoverageByConvexPolygonsVisualization.vue";
+import urlJoin from "url-join";
 
-const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'min_conv_poly_coverage/instance/ccheese142/raw'
+const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_coverage/instances/ccheese142/raw')
 </script>
 
 <template>

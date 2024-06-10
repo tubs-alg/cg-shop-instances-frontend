@@ -1,8 +1,9 @@
 <script setup>
 import MathFormula from "@/components/math/MathFormula.vue";
 import MaximumPolygonPackingVisualization from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
+import urlJoin from "url-join";
 
-const exampleInstanceUrl = process.env.VUE_APP_API_URL + 'max_poly_packing/instance/random_rcf2_x2871624_50/raw'
+const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'max_poly_packing/instances/random_rcf2_x2871624_50/raw');
 </script>
 
 <template>

@@ -69,14 +69,6 @@ const apiUrl = process.env.VUE_APP_API_URL + 'docs'
         Api
       </v-btn>
 
-      <router-link to="/favorites" class="text-decoration-none me-3">
-        <v-btn icon :color="transparentAppBar?'white' : 'black'">
-          <v-icon>mdi-heart</v-icon>
-        </v-btn>
-      </router-link>
-
-
-
     </v-app-bar>
 
     <v-main>
