@@ -18,6 +18,12 @@ npm run serve
 npm run build
 ```
 
+Build from docker image:
+```
+docker build -t cgshop-frontend:latest .
+docker run -it --mount type=bind,source=/path/to/dist,target=/app/dist cgshop-frontend:latest
+```
+
 ### Lints and fixes files
 ```
 npm run lint
