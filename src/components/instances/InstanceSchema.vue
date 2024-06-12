@@ -27,6 +27,7 @@ import VCodeBlock from '@wdns/vue-code-block';
 
 import Problems from "@/data/problems";
 import InstancesService from "@/services/instances.service";
+import 'prismjs'
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-json';
 
