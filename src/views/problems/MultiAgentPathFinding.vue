@@ -70,17 +70,21 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_ma
       .
     </p>
 
+    <v-expansion-panels class="mt-5">
+      <v-expansion-panel
+          title="Instance Schema"
+      >
+        <v-expansion-panel-text>
+          <InstanceSchema :problem-id="Problems.MultiAgentPathFinding.id"/>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
     <v-divider class="my-5"></v-divider>
 
     <h3>Example Instance</h3>
 
     <MultiAgentPathFindingVisualization :url="exampleInstanceUrl"/>
-
-    <v-divider class="my-5"></v-divider>
-
-    <h3>Instance Schema</h3>
-
-    <InstanceSchema :problem-id="Problems.MultiAgentPathFinding.id"/>
 
     <v-divider class="my-5"></v-divider>
 

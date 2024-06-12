@@ -42,18 +42,22 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'max_poly_packin
       of the polygons <MathFormula formula="Q_i"/> (without rotation) for <MathFormula formula="i \in S"/>.
     </p>
 
+    <v-expansion-panels class="mt-5">
+      <v-expansion-panel
+          title="Instance Schema"
+      >
+        <v-expansion-panel-text>
+          <InstanceSchema :problem-id="Problems.MaximumPolygonPacking.id"/>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
     <v-divider class="my-5"></v-divider>
 
     <h3>Example Instance</h3>
 
     <MaximumPolygonPackingVisualization
         :url="exampleInstanceUrl"/>
-
-    <v-divider class="my-5"></v-divider>
-
-    <h3>Instance Schema</h3>
-
-    <InstanceSchema :problem-id="Problems.MaximumPolygonPacking.id"/>
 
     <v-divider class="my-5"></v-divider>
 

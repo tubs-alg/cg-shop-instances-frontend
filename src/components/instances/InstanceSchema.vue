@@ -13,7 +13,7 @@ import VCodeBlock from '@wdns/vue-code-block';
     <v-tab value="pydantic">Pydantic</v-tab>
   </v-tabs>
   <v-scroll-x-transition hide-on-leave>
-  <VCodeBlock :code="schema" :language="languages[format]" prismjs theme="tomorrow" v-if="schema"/>
+  <VCodeBlock :code="schema" :lang="languages[format]" prismjs theme="tomorrow" v-if="schema"/>
   <div class="code-loader" v-if="!schema">
     <v-progress-circular
         color="white"
@@ -27,6 +27,8 @@ import VCodeBlock from '@wdns/vue-code-block';
 
 import Problems from "@/data/problems";
 import InstancesService from "@/services/instances.service";
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-json';
 
 export default {
   name: 'InstanceSchema',
@@ -49,8 +51,8 @@ export default {
     return {
       format: 'json',
       languages: {
-        json: 'json',
-        pydantic: 'python'
+        "json": 'json',
+        "pydantic": 'python'
       },
       service: new InstancesService(this.problemId),
       schema: null

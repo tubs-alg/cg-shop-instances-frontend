@@ -31,17 +31,39 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_c
     <h3>Description</h3>
     <p>
       Given a convex region,
-      <MathFormula formula="P"/>,
+      <MathFormula formula="P"/>
+      ,
       in the plane, and a collection
       of simple polygons,
-      <MathFormula formula="Q_1,…, Q_n"/>,
-      each <MathFormula formula="Q_i"/>
+      <MathFormula formula="Q_1,…, Q_n"/>
+      ,
+      each
+      <MathFormula formula="Q_i"/>
       with a respective value of
-      <MathFormula formula="c_i"/>,
-      the task is to find a subset <MathFormula formula="S"/> of
-      <MathFormula formula="\{1,...,n\}"/> and a feasible packing within <MathFormula formula="P"/>
-      of the polygons <MathFormula formula="Q_i"/> (without rotation) for <MathFormula formula="i \in S"/>.
+      <MathFormula formula="c_i"/>
+      ,
+      the task is to find a subset
+      <MathFormula formula="S"/>
+      of
+      <MathFormula formula="\{1,...,n\}"/>
+      and a feasible packing within
+      <MathFormula formula="P"/>
+      of the polygons
+      <MathFormula formula="Q_i"/>
+      (without rotation) for
+      <MathFormula formula="i \in S"/>
+      .
     </p>
+
+    <v-expansion-panels class="mt-5">
+      <v-expansion-panel
+          title="Instance Schema"
+      >
+        <v-expansion-panel-text>
+          <InstanceSchema :problem-id="Problems.MinimumConvexPolygonCoverage.id"/>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
 
     <v-divider class="my-5"></v-divider>
 
@@ -49,12 +71,6 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_c
 
     <MinimumCoverageByConvexPolygonsVisualization
         :url="exampleInstanceUrl"/>
-
-    <v-divider class="my-5"></v-divider>
-
-    <h3>Instance Schema</h3>
-
-    <InstanceSchema :problem-id="Problems.MinimumConvexPolygonCoverage.id"/>
 
     <v-divider class="my-5"></v-divider>
 

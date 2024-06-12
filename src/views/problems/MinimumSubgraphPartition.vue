@@ -42,18 +42,22 @@ const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_plane_subgr
       <MathFormula formula="G_i"/>; no edges may cross, i.e., share points that are not segment end points.
     </p>
 
+    <v-expansion-panels class="mt-5">
+      <v-expansion-panel
+          title="Instance Schema"
+      >
+        <v-expansion-panel-text>
+          <InstanceSchema :problem-id="Problems.MinimumPlaneSubgraphPartition.id"/>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
     <v-divider class="my-5"></v-divider>
 
     <h3>Example Instance</h3>
 
     <MinimumSubgraphPartitionVisualization
         :url="exampleInstanceUrl" :solution-url="exampleSolutionUrl" />
-
-    <v-divider class="my-5"></v-divider>
-
-    <h3>Instance Schema</h3>
-
-    <InstanceSchema :problem-id="Problems.MinimumPlaneSubgraphPartition.id"/>
 
     <v-divider class="my-5"></v-divider>
 
