@@ -2,6 +2,8 @@
 import MathFormula from "@/components/math/MathFormula.vue";
 import MinimumConvexPartitionVisualization from "@/components/visualizations/MinimumConvexPartitionVisualization.vue";
 import urlJoin from "url-join";
+import Problems from "@/data/problems";
+import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partition/instances/euro-night-0001000/raw')
 const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partition/instances/euro-night-0001000/solutions/2be919d7be7914f6989deba46be4fcb2/raw')
@@ -48,6 +50,12 @@ const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partit
     <MinimumConvexPartitionVisualization
         :solution-url="exampleSolutionUrl"
         :url="exampleInstanceUrl"/>
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>Instance Schema</h3>
+
+    <InstanceSchema :problem-id="Problems.MinimumConvexPartition.id"/>
 
     <v-divider class="my-5"></v-divider>
 

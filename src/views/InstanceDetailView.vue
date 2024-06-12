@@ -27,6 +27,7 @@
         <v-tab prepend-icon="mdi-gesture-tap" text="Interactive Visualization" value="visualization"
                v-if="instance.raw"></v-tab>
         <v-tab v-if="solutions.length > 0" prepend-icon="mdi-file-compare" text="Solutions" value="solutions"></v-tab>
+        <v-tab prepend-icon="mdi-ev-plug-type1" text="Schemas" value="schemas"></v-tab>
       </v-tabs>
 
       <v-tabs-window v-model="tab">
@@ -140,6 +141,12 @@
             </v-card-text>
           </v-card>
         </v-tabs-window-item>
+
+        <v-tabs-window-item value="schemas">
+          <v-card flat class="py-5">
+            <InstanceSchema :problem-id="problem"/>
+          </v-card>
+        </v-tabs-window-item>
       </v-tabs-window>
     </div>
 
@@ -157,6 +164,7 @@ import MinimumCoverageByConvexPolygonsVisualization from "@/components/visualiza
 import MultiAgentPathFindingVisualization from "@/components/visualizations/MultiAgentPathFindingVisualization.vue";
 import Problems from "@/data/problems";
 import urlJoin from 'url-join';
+import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 
 export default {
   name: 'InstanceDetailView',
@@ -194,6 +202,7 @@ export default {
     }
   },
   components: {
+    InstanceSchema,
     MinimumConvexPartitionVisualization,
     MaximumPolygonPackingVisualization,
     MinimumSubgraphPartitionVisualization,

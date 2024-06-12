@@ -2,6 +2,8 @@
 import MathFormula from "@/components/math/MathFormula.vue";
 import MultiAgentPathFindingVisualization from "@/components/visualizations/MultiAgentPathFindingVisualization.vue";
 import urlJoin from "url-join";
+import Problems from "@/data/problems";
+import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_mapf/instances/buffalo_000_25x25_20_63/raw')
 </script>
@@ -73,6 +75,12 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_ma
     <h3>Example Instance</h3>
 
     <MultiAgentPathFindingVisualization :url="exampleInstanceUrl"/>
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>Instance Schema</h3>
+
+    <InstanceSchema :problem-id="Problems.MultiAgentPathFinding.id"/>
 
     <v-divider class="my-5"></v-divider>
 

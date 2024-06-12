@@ -3,9 +3,12 @@ import MathFormula from "@/components/math/MathFormula.vue";
 import MinimumSubgraphPartitionVisualization
   from "@/components/visualizations/MinimumSubgraphPartitionVisualization.vue";
 import urlJoin from "url-join";
+import Problems from "@/data/problems";
+import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 
 
-const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_plane_subgraph_partition/instances/reecn3382/raw')
+const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_plane_subgraph_partition/instances/vispecn2518/raw')
+const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_plane_subgraph_partition/instances/vispecn2518/solutions/63bd6d8b2515e0e1f65872db27dc3d37/raw')
 </script>
 
 <template>
@@ -44,7 +47,13 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_plane_subgr
     <h3>Example Instance</h3>
 
     <MinimumSubgraphPartitionVisualization
-        :url="exampleInstanceUrl"/>
+        :url="exampleInstanceUrl" :solution-url="exampleSolutionUrl" />
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>Instance Schema</h3>
+
+    <InstanceSchema :problem-id="Problems.MinimumPlaneSubgraphPartition.id"/>
 
     <v-divider class="my-5"></v-divider>
 

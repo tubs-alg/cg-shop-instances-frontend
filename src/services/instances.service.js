@@ -17,6 +17,10 @@ class InstancesService {
         throw new Error("Problem not found")
     }
 
+    getInstanceSchema(format) {
+        return axios.get(this.baseUrl() + "instance_schema/" + format)
+    }
+
     getProblem() {
         return axios.get(this.baseUrl() + "problem")
     }

@@ -15,6 +15,7 @@
       <div :id="sceneId"></div>
     </div>
 
+    <v-slider v-if="data && data.solution" v-model="highlight" min="0" :max="maxColor" step="1" label="Subgraph" thumb-label></v-slider>
 
     <div v-if="rendered" class="text-center mt-1 text-sm-caption">
       Controls: Mouse wheel to zoom, Mouse click to pan
@@ -35,6 +36,7 @@ import {
   fitCameraToObject
 } from "@/lib/visualization/threejs_helper";
 import {createColors, rgbHex} from 'color-map'
+import colormap from "colormap";
 
 
 export default {
@@ -43,9 +45,25 @@ export default {
     url: String,
     solutionUrl: String
   },
+  watch: {
+    highlight() {
+      this.changedHighlight = true;
+    }
+  },
+  computed: {
+    maxColor() {
+      if(!this.data.solution) {
+        return 0;
+      }
+
+      return Math.max(...this.data.solution.colors);
+    }
+  },
   data() {
     return {
+      changedHighlight: true,
       rendered: false,
+      highlight: 0,
       data: null,
       sceneId: this.$.uid + '-scene',
       sceneContainerId: this.$.uid + '-sceneContainer',
@@ -74,6 +92,9 @@ export default {
       let itemColors = ['#4694e6', '#3bd35d', '#e1413a', '#7241df',
         '#e3e131', '#21a39f']
       return itemColors[i % itemColors.length]
+    },
+    solutionColor(i) {
+      return "#0a6e6e"
     },
     initializeScene() {
       const width = document.getElementById(this.sceneId).offsetWidth;
@@ -147,24 +168,54 @@ export default {
       const pointsMesh = new THREE.Points(geometry, material);
       allObjects.add(pointsMesh);
 
-
       scene.add(allObjects);
 
       fitCameraToObject(allObjects, camera, 3, controls);
       controls.update()
+
+      let highlightedObjects = new THREE.Group();
+      scene.add(highlightedObjects);
+
 
       this.renderer.setAnimationLoop(() => {
         controls.update()
         let scaleVector = new THREE.Vector3();
         pointsMesh.material.size = Math.min(10,
             scaleVector.subVectors(pointsMesh.position, camera.position).length() / width);
+
+        if (this.data.solution && this.changedHighlight) {
+          highlightedObjects.clear();
+          let matLine = new LineMaterial({
+            color: this.solutionColor(this.highlight),
+            opacity: 1,
+            linewidth: 2, // in world units with size attenuation, pixels otherwise,
+            resolution: new THREE.Vector2(width, height)
+          });
+
+          this.data.edges.start.forEach((a, i) => {
+            if(this.data.solution.colors[i] !== this.highlight) {
+              return;
+            }
+            const b = this.data.edges.end[i];
+            const coordinates = [
+              points[a].x, points[a].y, 1,
+              points[b].x, points[b].y, 1
+            ];
+
+            const geometry = new LineGeometry().setPositions(coordinates);
+            highlightedObjects.add(new Line2(geometry, matLine));
+          });
+
+          this.changedHighlight = false
+        }
+
         this.renderer.render(scene, camera);
         this.rendered = true;
       });
     }
   },
   unmounted() {
-    if(this.renderer) this.renderer.dispose();
+    if (this.renderer) this.renderer.dispose();
   }
 }
 

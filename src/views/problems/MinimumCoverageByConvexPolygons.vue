@@ -3,6 +3,8 @@ import MathFormula from "@/components/math/MathFormula.vue";
 import MinimumCoverageByConvexPolygonsVisualization
   from "@/components/visualizations/MinimumCoverageByConvexPolygonsVisualization.vue";
 import urlJoin from "url-join";
+import Problems from "@/data/problems";
+import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_coverage/instances/ccheese142/raw')
 </script>
@@ -47,6 +49,12 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_c
 
     <MinimumCoverageByConvexPolygonsVisualization
         :url="exampleInstanceUrl"/>
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>Instance Schema</h3>
+
+    <InstanceSchema :problem-id="Problems.MinimumConvexPolygonCoverage.id"/>
 
     <v-divider class="my-5"></v-divider>
 

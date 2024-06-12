@@ -2,6 +2,8 @@
 import MathFormula from "@/components/math/MathFormula.vue";
 import MaximumPolygonPackingVisualization from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
 import urlJoin from "url-join";
+import InstanceSchema from "@/components/instances/InstanceSchema.vue";
+import Problems from "@/data/problems";
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'max_poly_packing/instances/random_rcf2_x2871624_50/raw');
 </script>
@@ -46,6 +48,12 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'max_poly_packin
 
     <MaximumPolygonPackingVisualization
         :url="exampleInstanceUrl"/>
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>Instance Schema</h3>
+
+    <InstanceSchema :problem-id="Problems.MaximumPolygonPacking.id"/>
 
     <v-divider class="my-5"></v-divider>
 
