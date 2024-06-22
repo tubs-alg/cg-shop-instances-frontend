@@ -2,7 +2,7 @@
 
 This repository contains the frontend for the CG:SHOP Instances Collection.
 It runs in conjunction with a backend API server and is currently hosted at
-[https://cgshop.ibr.cs.tu-bs.de/instances](https://cgshop.ibr.cs.tu-bs.de/instances).
+[https://cgshop.ibr.cs.tu-bs.de/instances/](https://cgshop.ibr.cs.tu-bs.de/instances/).
 
 ## Project setup
 
