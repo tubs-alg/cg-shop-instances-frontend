@@ -3,23 +3,33 @@ const Problems = {
         name: "Maximum Polygon Packing",
         endpoint: "max_poly_packing/",
         id: "mpp",
-        minimization: false,
         visualizationComponent: "MaximumPolygonPackingVisualization",
         labels: {
             "num_items": "items",
         },
+        objectives: [
+            {
+                key: "value",
+                minimization: false,
+            }
+        ],
         instanceCardAttributes: ["num_items"],
     },
     MinimumConvexPartition: {
         name: "Minimum Convex Partition",
         endpoint: "min_conv_partition/",
         id: "mcp",
-        minimization: true,
         visualizationComponent: "MinimumConvexPartitionVisualization",
         labels: {
             "num_points": "points",
             "num_triangs": "triangles",
         },
+        objectives: [
+            {
+                key: "value",
+                minimization: true
+            }
+        ],
         instanceCardAttributes: ["num_points", "num_triangs"]
     },
     MinimumPlaneSubgraphPartition: {
@@ -27,11 +37,16 @@ const Problems = {
         endpoint: "min_plane_subgraph_partition/",
         id: "mpsp",
         visualizationComponent: "MinimumSubgraphPartitionVisualization",
-        minimization: true,
         labels: {
             "num_points": "points",
             "num_edges": "edges",
         },
+        objectives: [
+            {
+                key: "objective",
+                minimization: true
+            }
+        ],
         instanceCardAttributes: ["num_points", "num_edges"]
     },
     MinimumConvexPolygonCoverage: {
@@ -39,11 +54,16 @@ const Problems = {
         endpoint: "min_conv_poly_coverage/",
         id: "mcpc",
         visualizationComponent: "MinimumCoverageByConvexPolygonsVisualization",
-        minimization: true,
         labels: {
             "num_points": "points",
             "num_holes": "holes",
         },
+        objectives: [
+            {
+                key: "objective",
+                minimization: true
+            }
+        ],
         instanceCardAttributes: ["num_points", "num_holes"]
     },
     MultiAgentPathFinding: {
@@ -51,11 +71,20 @@ const Problems = {
         endpoint: "min_makespan_mapf/",
         id: "mapf",
         visualizationComponent: "MultiAgentPathFindingVisualization",
-        minimization: true,
         labels: {
             "num_agents": "agents",
             "num_obstacles": "obstacles",
         },
+        objectives: [
+            {
+                key: "makespan",
+                minimization: true,
+            },
+            {
+                key: "energy",
+                minimization: true
+            }
+        ],
         instanceCardAttributes: []
     }
 }

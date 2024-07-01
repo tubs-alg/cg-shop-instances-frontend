@@ -6,6 +6,7 @@ import Problems from "@/data/problems";
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_mapf/instances/buffalo_000_25x25_20_63/raw')
+const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_mapf/instances/buffalo_000_25x25_20_63/solutions/df43f274b04336eded288f63e8846262/raw')
 </script>
 
 <template>
@@ -84,7 +85,7 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_ma
 
     <h3>Example Instance</h3>
 
-    <MultiAgentPathFindingVisualization :url="exampleInstanceUrl"/>
+    <MultiAgentPathFindingVisualization :url="exampleInstanceUrl" :solution-url="exampleSolutionUrl"/>
 
     <v-divider class="my-5"></v-divider>
 

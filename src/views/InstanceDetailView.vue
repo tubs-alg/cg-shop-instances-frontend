@@ -89,14 +89,16 @@
                 <thead>
                 <tr>
                   <th class="text-left">Solution</th>
-                  <th class="text-left">Value</th>
+                  <th class="text-left" v-for="objective in problemConfig.objectives" :key="objective.key">
+                    {{ objective.key }}
+                  </th>
                   <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="solution in orderedSolutions" :key="solution.id">
                   <td>{{ solution.uid }}</td>
-                  <td>{{ solution.value }}</td>
+                  <td  v-for="objective in problemConfig.objectives" :key="objective.key">{{ solution[objective.key] }}</td>
                   <td class="text-end">
                     <v-btn v-if="solution.raw"
                            @click="solutionDialog = true; solutionToVisualize = solution;"
@@ -117,8 +119,11 @@
                   max-width="1000"
               >
                 <v-card prepend-icon="mdi-eye"
-                        :title="'Solution ' + solutionToVisualize.id + ' with value ' + solutionToVisualize.value">
+                        :title="'Solution ' + solutionToVisualize.uid">
                   <v-card-text>
+                    <div v-for="objective in problemConfig.objectives" :key="objective.key">
+                      <strong>{{ objective.key }}:</strong> {{ solutionToVisualize[objective.key] }}
+                    </div>
                     <component :is="problemConfig.visualizationComponent"
                                v-if="problemConfig.visualizationComponent"
                                :url="service.getInstanceRawUrl(instance.uid)"
@@ -175,11 +180,13 @@ export default {
       });
     },
     orderedSolutions() {
-      if (this.problemConfig.minimization) {
-        return this.solutions.slice(0).sort((a, b) => a.value - b.value)
+      const key = this.problemConfig.objectives[0].key;
+      const isMinimization = this.problemConfig.objectives[0].minimization;
+      if (isMinimization) {
+        return this.solutions.slice(0).sort((a, b) => a[key] - b[key])
       }
 
-      return this.solutions.slice(0).sort((a, b) => b.value - a.value)
+      return this.solutions.slice(0).sort((a, b) => b[key] - a[key])
     },
     problemName() {
       return this.problemConfig.name

@@ -85,7 +85,7 @@ export default {
   computed: {
     maxAnimationStep() {
       if (!this.data || !this.data.solution) return 0;
-      return this.data.solution.steps.length
+      return this.data.solution.time_steps.length
     },
     allPositions() {
       if (this.data === null || this.data.solution === null) return [];
@@ -96,9 +96,10 @@ export default {
 
       let positions = [currentPositions.slice(0)]
 
-      this.data.solution.steps.forEach((step) => {
+      this.data.solution.time_steps.forEach((step) => {
         currentPositions = [...currentPositions];
-        for (const [idx, val] of Object.entries(step)) {
+        step.agent_ids.map((idx, i) => {
+          const val = step.agent_moves[i];
           let xDiff = 0;
           let yDiff = 0;
           if (val === "W") {
@@ -115,7 +116,7 @@ export default {
             x: currentPositions[idx].x + xDiff,
             y: currentPositions[idx].y + yDiff
           }
-        }
+        });
         positions.push(currentPositions)
       })
 
