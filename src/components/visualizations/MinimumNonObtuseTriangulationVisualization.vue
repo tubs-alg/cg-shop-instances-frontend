@@ -175,8 +175,8 @@ export default {
       this.renderer.setAnimationLoop(() => {
         controls.update()
         let scaleVector = new THREE.Vector3();
-        pointsMesh.material.size = Math.min(10,
-            scaleVector.subVectors(pointsMesh.position, camera.position).length() / width);
+        pointsMesh.material.size = Math.max(10, Math.min(10,
+            scaleVector.subVectors(pointsMesh.position, camera.position).length() / width));
 
 
         this.renderer.render(scene, camera);
