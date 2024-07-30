@@ -2,6 +2,13 @@
 import MathFormula from "@/components/math/MathFormula.vue";
 import Problems from "@/data/problems";
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
+import urlJoin from "url-join";
+import MinimumNonObtuseTriangulationVisualization
+  from "@/components/visualizations/MinimumNonObtuseTriangulationVisualization.vue";
+
+
+const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_nonobt_triang/instances/cgshop2025_examples_simple-polygon-exterior-20_100_741418808487093555/raw')
+
 </script>
 
 <template>
@@ -53,6 +60,12 @@ import InstanceSchema from "@/components/instances/InstanceSchema.vue";
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
+
+    <v-divider class="my-5"></v-divider>
+
+    <h3>Example Instance</h3>
+
+    <MinimumNonObtuseTriangulationVisualization :url="exampleInstanceUrl" />
 
     <v-divider class="my-5"></v-divider>
 

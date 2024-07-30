@@ -167,6 +167,7 @@ import MinimumConvexPartitionVisualization from "@/components/visualizations/Min
 import MinimumSubgraphPartitionVisualization from "@/components/visualizations/MinimumSubgraphPartitionVisualization.vue";
 import MinimumCoverageByConvexPolygonsVisualization from "@/components/visualizations/MinimumCoverageByConvexPolygonsVisualization.vue";
 import MultiAgentPathFindingVisualization from "@/components/visualizations/MultiAgentPathFindingVisualization.vue";
+import MinimumNonObtuseTriangulationVisualization from "@/components/visualizations/MinimumNonObtuseTriangulationVisualization.vue";
 import Problems from "@/data/problems";
 import urlJoin from 'url-join';
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
@@ -214,7 +215,8 @@ export default {
     MaximumPolygonPackingVisualization,
     MinimumSubgraphPartitionVisualization,
     MinimumCoverageByConvexPolygonsVisualization,
-    MultiAgentPathFindingVisualization
+    MultiAgentPathFindingVisualization,
+    MinimumNonObtuseTriangulationVisualization
   },
   data: function () {
     return {

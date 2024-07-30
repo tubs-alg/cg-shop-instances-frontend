@@ -91,7 +91,7 @@ const Problems = {
         name: "Minimum Non-Obtuse Triangulations\n",
         endpoint: "min_nonobt_triang/",
         id: "nonobt_triang",
-        visualizationComponent: null,
+        visualizationComponent: "MinimumNonObtuseTriangulationVisualization",
         labels: {
             "num_points": "points",
             "num_constraints": "constraints",
