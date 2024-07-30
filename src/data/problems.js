@@ -86,6 +86,23 @@ const Problems = {
             }
         ],
         instanceCardAttributes: []
-    }
+    },
+    NonObtuseTriangulations: {
+        name: "Minimum Non-Obtuse Triangulations\n",
+        endpoint: "min_nonobt_triang/",
+        id: "nonobt_triang",
+        visualizationComponent: null,
+        labels: {
+            "num_points": "points",
+            "num_constraints": "constraints",
+        },
+        objectives: [
+            {
+                key: "makespan",
+                minimization: true,
+            }
+        ],
+        instanceCardAttributes: []
+    },
 }
 export default Problems;

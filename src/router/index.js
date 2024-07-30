@@ -51,6 +51,11 @@ const routes = [
     path: '/mapf',
     name: 'mapf',
     component: () => import('../views/problems/MultiAgentPathFinding.vue')
+  },
+  {
+    path: '/nonobt_triang',
+    name: 'nonobt_triang',
+    component: () => import('../views/problems/MinimumNonObtuseTriangulation.vue')
   }
 ]
 
