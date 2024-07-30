@@ -97,6 +97,12 @@
                        :img="require('@/assets/problems/mpsp.png')"
                        description="Partition a graph into minimum plane subgraphs."/>
         </v-col>
+
+        <v-col lg="4" md="6" cols="12">
+          <ProblemCard link="/nonobt_triang" title="Minimum Non-Obtuse Triangulation"
+                       :img="require('@/assets/problems/nonobt_triang.png')"
+                       description="Find a feasible non-obtuse triangulation using a minimum number of Steiner points"/>
+        </v-col>
       </v-row>
 
     </v-container>
