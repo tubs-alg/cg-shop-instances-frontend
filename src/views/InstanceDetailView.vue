@@ -51,13 +51,10 @@
                     </tbody>
                   </v-table>
                   <div class="text-center mt-3">
-                    <a :href="buildUrl(instance.path)" download="download" target="_blank">
-                      <v-chip prepend-icon="mdi-download" label>
-                        Download
-                      </v-chip>
+                    <a :href="downloadUrl" download target="_blank">
+                      <v-btn icon="mdi-download"></v-btn>
                     </a>
                   </div>
-
                 </v-col>
                 <v-col lg="6" align-self="center">
                   <vue-image-zoomer :regular="buildUrl(instance.image)" click-zoom v-if="instance.image"/>
@@ -98,7 +95,10 @@
                 <tbody>
                 <tr v-for="solution in orderedSolutions" :key="solution.id">
                   <td>{{ solution.uid }}</td>
-                  <td  v-for="objective in problemConfig.objectives" :key="objective.key">{{ solution[objective.key] }}</td>
+                  <td v-for="objective in problemConfig.objectives" :key="objective.key">{{
+                      solution[objective.key]
+                    }}
+                  </td>
                   <td class="text-end">
                     <v-btn v-if="solution.raw"
                            @click="solutionDialog = true; solutionToVisualize = solution;"
@@ -164,10 +164,13 @@ import InstancesService from "@/services/instances.service";
 import UserService from "@/services/user.service";
 import MaximumPolygonPackingVisualization from "@/components/visualizations/MaximumPolygonPackingVisualization.vue";
 import MinimumConvexPartitionVisualization from "@/components/visualizations/MinimumConvexPartitionVisualization.vue";
-import MinimumSubgraphPartitionVisualization from "@/components/visualizations/MinimumSubgraphPartitionVisualization.vue";
-import MinimumCoverageByConvexPolygonsVisualization from "@/components/visualizations/MinimumCoverageByConvexPolygonsVisualization.vue";
+import MinimumSubgraphPartitionVisualization
+  from "@/components/visualizations/MinimumSubgraphPartitionVisualization.vue";
+import MinimumCoverageByConvexPolygonsVisualization
+  from "@/components/visualizations/MinimumCoverageByConvexPolygonsVisualization.vue";
 import MultiAgentPathFindingVisualization from "@/components/visualizations/MultiAgentPathFindingVisualization.vue";
-import MinimumNonObtuseTriangulationVisualization from "@/components/visualizations/MinimumNonObtuseTriangulationVisualization.vue";
+import MinimumNonObtuseTriangulationVisualization
+  from "@/components/visualizations/MinimumNonObtuseTriangulationVisualization.vue";
 import Problems from "@/data/problems";
 import urlJoin from 'url-join';
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
@@ -179,6 +182,9 @@ export default {
       return Object.values(Problems).find((p) => {
         return p.id === this.problem;
       });
+    },
+    downloadUrl() {
+      return this.buildUrl(this.instance.path)
     },
     orderedSolutions() {
       const key = this.problemConfig.objectives[0].key;

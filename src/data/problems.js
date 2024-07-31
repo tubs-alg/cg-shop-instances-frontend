@@ -98,11 +98,11 @@ const Problems = {
         },
         objectives: [
             {
-                key: "makespan",
+                key: "num_steiner_points",
                 minimization: true,
             }
         ],
-        instanceCardAttributes: []
+        instanceCardAttributes: ["num_points", "num_constraints"]
     },
 }
 export default Problems;
