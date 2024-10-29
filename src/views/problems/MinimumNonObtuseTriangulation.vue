@@ -5,6 +5,7 @@ import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 import urlJoin from "url-join";
 import MinimumNonObtuseTriangulationVisualization
   from "@/components/visualizations/MinimumNonObtuseTriangulationVisualization.vue";
+import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_nonobt_triang/instances/cgshop2025_examples_simple-polygon-exterior-20_100_741418808487093555/raw')
@@ -14,15 +15,12 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_nonobt_tria
 <template>
   <v-container>
 
-    <h1 class="text-h3 mb-4">Minimum Non-Obtuse Triangulations</h1>
-
+    <ProblemsHeader :problem="Problems.NonObtuseTriangulations"/>
 
     <p>
       The Seventh Computational Geometry Challenge is on Minimum Non-Obtuse Triangulations,
       as part of CG Week in Kanazawa, Japan, June
       23-27, 2025.
-    </p>
-    <p>
       As in previous years, the objective will be to compute good solutions to instances of a difficult geometric
       optimization problem. The specific problem chosen for the 2025 Challenge is Minimum Non-Obtuse Triangulations, as
       follows.
@@ -34,8 +32,8 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_nonobt_tria
     <p>
       In the Planar Straight Line Graphs (PSLGs) variant of the Minimum Non-Obtuse Triangulation problem, the objective
       is to triangulate the convex hull of a given PSLG
-      <MathFormula formula="G"/>
-      , which is defined by a set of vertices and edges laid out in a plane such that the edges do not cross except at
+      <MathFormula formula="G"/>, which is defined by a set of vertices and
+      edges laid out in a plane such that the edges do not cross except at
       their endpoints. The triangulation must incorporate the existing edges of
       <MathFormula formula="G"/>
       and can include the addition of Steiner points anywhere in the plane, including on these edges. The placement of

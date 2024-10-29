@@ -53,7 +53,7 @@
             for practical solution quality, realistic running times, or even exact solutions.
           </p>
         </v-col>
-        <v-col lg="6">
+        <v-col lg="6" class="d-none d-lg-block">
           <v-img class="mx-auto" max-width="60%" :src="require('@/assets/mwt.png')"></v-img>
         </v-col>
       </v-row>
@@ -148,17 +148,25 @@ export default {
   color: white;
 }
 
-.hero .hero-img {
-  background-image: url("@/assets/hero.svg");
-  background-size: contain;
-  background-position: center left;
+@media (min-width: 960px) {
 
+
+  .hero .hero-img {
+    background-image: url("@/assets/hero.svg");
+    background-size: contain;
+    background-position: center left;
+    padding-left: 500px
+  }
+}
+
+
+.hero .hero-img {
   min-height: 400px;
   display: flex;
   align-items: center;
   justify-content: end;
-  padding-left: 500px
 }
+
 
 .hero .gradient {
   background-size: cover !important;

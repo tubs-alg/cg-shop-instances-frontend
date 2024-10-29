@@ -4,6 +4,7 @@ import MinimumConvexPartitionVisualization from "@/components/visualizations/Min
 import urlJoin from "url-join";
 import Problems from "@/data/problems";
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
+import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partition/instances/euro-night-0001000/raw')
 const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partition/instances/euro-night-0001000/solutions/2be919d7be7914f6989deba46be4fcb2/raw')
@@ -12,12 +13,11 @@ const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partit
 <template>
   <v-container>
 
-    <h1 class="text-h3 mb-4">Minimum Convex Partition</h1>
-
+    <ProblemsHeader :problem="Problems.MinimumConvexPartition"/>
 
     <p>
       The Minimum Convex Partition Problem was part of the Second Computational Geometry Challenge,
-      and is discussed during CG Week in 2020.
+      and was discussed during CG Week in 2020.
     </p>
 
     <v-divider class="my-5"></v-divider>
@@ -55,7 +55,7 @@ const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partit
 
     <v-divider class="my-5"></v-divider>
 
-    <h3>Example Instance</h3>
+    <h3>Example Instance and Solution</h3>
 
     <MinimumConvexPartitionVisualization
         :solution-url="exampleSolutionUrl"

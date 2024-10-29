@@ -4,6 +4,7 @@ import MultiAgentPathFindingVisualization from "@/components/visualizations/Mult
 import urlJoin from "url-join";
 import Problems from "@/data/problems";
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
+import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_mapf/instances/buffalo_000_25x25_20_63/raw')
 const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_mapf/instances/buffalo_000_25x25_20_63/solutions/df43f274b04336eded288f63e8846262/raw')
@@ -12,18 +13,14 @@ const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_ma
 <template>
   <v-container>
 
-    <h1 class="text-h3 mb-4">Multi Agent Path Finding</h1>
-
+    <ProblemsHeader :problem="Problems.MultiAgentPathFinding"/>
 
     <p>
       The Third Computational Geometry Challenge was on Multi Agent Path Finding,
-      as part of CG Week in Buffalo, USA, June
-      7-11, 2021.
-    </p>
-    <p>
-      As in previous years, the objective was be to compute good solutions to instances of a difficult geometric
-      optimization problem. The specific problem chosen for the 2021 Challenge is Multi Agent Path Finding, as
-      follows.
+      as part of CG Week in Buffalo, USA, June 7-11, 2021.
+      As in previous years, the objective was to compute good solutions to instances of a difficult geometric
+      optimization problem. The specific problem chosen for the 2021 Challenge was
+      <strong>Multi Agent Path Finding</strong>, as follows.
     </p>
 
     <v-divider class="my-5"></v-divider>
@@ -48,8 +45,7 @@ const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_ma
       there are robots at each of the two adjacent pixels
       <MathFormula formula="(x,y)"/>
       and
-      <MathFormula formula="(x+1,y)"/>
-      , then the robot at
+      <MathFormula formula="(x+1,y)"/>, then the robot at
       <MathFormula formula="(x,y)"/>
       can move east into position
       <MathFormula formula="(x+1,y)"/>
@@ -65,10 +61,7 @@ const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_ma
       robots, with the trajectory for robot
       <MathFormula formula="i"/>
       moving it from
-      <MathFormula formula="s_i"/>
-      to
-      <MathFormula formula="t_i"/>
-      .
+      <MathFormula formula="s_i"/> to <MathFormula formula="t_i"/>.
     </p>
 
     <v-expansion-panels class="mt-5">
@@ -83,7 +76,7 @@ const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_ma
 
     <v-divider class="my-5"></v-divider>
 
-    <h3>Example Instance</h3>
+    <h3>Example Instance and Solution</h3>
 
     <MultiAgentPathFindingVisualization :url="exampleInstanceUrl" :solution-url="exampleSolutionUrl"/>
 
@@ -105,7 +98,3 @@ const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_makespan_ma
 
   </v-container>
 </template>
-
-<style scoped>
-
-</style>

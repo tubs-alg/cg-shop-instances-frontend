@@ -4,21 +4,25 @@ import MaximumPolygonPackingVisualization from "@/components/visualizations/Maxi
 import urlJoin from "url-join";
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 import Problems from "@/data/problems";
+import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'max_poly_packing/instances/random_rcf2_x2871624_50/raw');
+const searchUrl = {
+  name: 'instances',
+  params: {
+    problem: Problems.MaximumPolygonPacking.id
+  }
+}
 </script>
 
 <template>
   <v-container>
 
-    <h1 class="text-h3 mb-4">Maximum Polygon Packing</h1>
-
+    <ProblemsHeader :problem="Problems.MaximumPolygonPacking"/>
 
     <p>
       The Maximum Polygon Packing Problem was part of the Sixth Computational Geometry Challenge,
-      and is discussed during CG Week in Athens, Greece, June 10-14, 2024.
-    </p>
-    <p>
+      and was discussed during CG Week in Athens, Greece, June 10-14, 2024.
       As in previous years, the objective was be to compute good solutions
       to instances of a difficult geometric optimization problem.
       The specific problem chosen for the 2024 Challenge is
@@ -30,16 +34,28 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'max_poly_packin
     <h3>Description</h3>
     <p>
       Given a convex region,
-      <MathFormula formula="P"/>,
+      <MathFormula formula="P"/>
+      ,
       in the plane, and a collection
       of simple polygons,
-      <MathFormula formula="Q_1,…, Q_n"/>,
-      each <MathFormula formula="Q_i"/>
+      <MathFormula formula="Q_1,…, Q_n"/>
+      ,
+      each
+      <MathFormula formula="Q_i"/>
       with a respective value of
-      <MathFormula formula="c_i"/>,
-      the task is to find a subset <MathFormula formula="S"/> of
-      <MathFormula formula="\{1,...,n\}"/> and a feasible packing within <MathFormula formula="P"/>
-      of the polygons <MathFormula formula="Q_i"/> (without rotation) for <MathFormula formula="i \in S"/>.
+      <MathFormula formula="c_i"/>
+      ,
+      the task is to find a subset
+      <MathFormula formula="S"/>
+      of
+      <MathFormula formula="\{1,...,n\}"/>
+      and a feasible packing within
+      <MathFormula formula="P"/>
+      of the polygons
+      <MathFormula formula="Q_i"/>
+      (without rotation) for
+      <MathFormula formula="i \in S"/>
+      .
     </p>
 
     <v-expansion-panels class="mt-5">
@@ -76,40 +92,23 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'max_poly_packin
     <p>
       Optimal packing problems have an extensive history in Computational Geometry.
       They are also relevant in many practical contexts.
-    </p>
-    <p>
       Even the one-dimensional version of the problem (the Knapsack Problem)
       is NP-hard; furthermore, some geometric variants have been shown to be
-      \(\exists R\)-complete [1], which most likely implies that they are not in the class NP.
-    </p>
-    <!--<p>
-    Details of the competition (such as benchmark instances, data formats,
-    specific constraints on feasible packings, such as integer coordinates,
-    as well as rules for submission and evaluation) will be announced in the
-    coming  weeks. Appropriate steps will be undertaken (e.g., by restricting
-    the  classes of feasible subsets) to ensure straightforward, automated
-    verification of solutions, but also ensure original algorithmic contributions.
-    </p>-->
-    <p>
-      The contributors with the most outstanding solutions will be recognized
+      <MathFormula formula="\exists\mathbb{R}"/>-complete [1],
+      which most likely implies that they are not in the class NP.
+      The contributors with the most outstanding solutions were recognized
       at CG Week 2024 and invited to present their results, both at the event
       and in the proceedings.
     </p>
-    <p>
-      We are looking forward to your contributions and welcome questions
-      and comments!
-    </p>
-
-    <p style="clear: both;"></p>
-
     <v-divider class="my-5"></v-divider>
 
     <h3>Instances</h3>
     <p>
-      A large number and variety of input polygonal regions P are
+      A large number and variety of input polygonal regions P were
       provided for the competition.
-      You can download them under <b>Download</b> above.
-      Make sure to download the actual challenge instances and not the example instances, as only those are evaluated.
+      Instances can be found via our
+      <router-link :to="searchUrl" class="text-decoration-none">search interface</router-link>
+      .
     </p>
 
     <v-divider class="my-5"></v-divider>

@@ -15,7 +15,7 @@ import RangeSliderFilters from "@/components/instances/filters/RangeSliderFilter
               {{ problemName }} Instances
             </span>
             <router-link :to="'/' + problem" class="text-white">
-              <v-btn variant="outlined" size="small">Learn more</v-btn>
+              <v-btn variant="outlined" size="small">Problem Definition</v-btn>
             </router-link>
 
           </h1>

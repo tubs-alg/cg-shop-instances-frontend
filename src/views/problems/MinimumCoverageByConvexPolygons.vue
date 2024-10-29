@@ -5,6 +5,7 @@ import MinimumCoverageByConvexPolygonsVisualization
 import urlJoin from "url-join";
 import Problems from "@/data/problems";
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
+import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
 const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_coverage/instances/ccheese142/raw')
 </script>
@@ -12,47 +13,27 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_c
 <template>
   <v-container>
 
-    <h1 class="text-h3 mb-4">Minimum Coverage by Convex Polygons</h1>
-
+    <ProblemsHeader :problem="Problems.MinimumConvexPolygonCoverage"/>
 
     <p>
-      The Maximum Polygon Packing Problem was part of the Sixth Computational Geometry Challenge,
-      and is discussed during CG Week in Athens, Greece, June 10-14, 2024.
-    </p>
-    <p>
-      As in previous years, the objective was be to compute good solutions
-      to instances of a difficult geometric optimization problem.
-      The specific problem chosen for the 2024 Challenge is
-      <strong>Maximum Polygon Packing</strong>, as follows.
+      The Fifth Computational Geometry Challenge, was part of CG Week in Dallas, TX, USA, June 12-15, 2023.
+      As in previous years, the objective was to compute good solutions to instances of a difficult geometric
+      optimization problem. The specific problem chosen for the 2023 Challenge was
+      <strong>Minimum Coverage by Convex Polygons</strong>, as follows.
     </p>
 
     <v-divider class="my-5"></v-divider>
 
     <h3>Description</h3>
     <p>
-      Given a convex region,
+      Given a geometric region,
       <MathFormula formula="P"/>
-      ,
-      in the plane, and a collection
-      of simple polygons,
-      <MathFormula formula="Q_1,…, Q_n"/>
-      ,
-      each
-      <MathFormula formula="Q_i"/>
-      with a respective value of
-      <MathFormula formula="c_i"/>
-      ,
-      the task is to find a subset
-      <MathFormula formula="S"/>
-      of
-      <MathFormula formula="\{1,...,n\}"/>
-      and a feasible packing within
+      , in the plane, which may be a simple polygon or a polygon with holes. The task is to cover
       <MathFormula formula="P"/>
-      of the polygons
-      <MathFormula formula="Q_i"/>
-      (without rotation) for
-      <MathFormula formula="i \in S"/>
-      .
+      with a collection,
+      <MathFormula formula="C_1,\dots,C_k"/>
+      of convex polygons, each contained within
+      <MathFormula formula="P"/>.
     </p>
 
     <v-expansion-panels class="mt-5">
@@ -76,9 +57,7 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_c
 
     <h3>Objective</h3>
     <p>
-      Maximize the total value
-      <MathFormula formula=" \sum_{i \in S} c_i"/>
-      of the packed polygons.
+      Minimize <MathFormula formula="k"/>, the number of convex polygons in the cover.
     </p>
 
     <p style="clear: both;"></p>
@@ -87,52 +66,37 @@ const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_c
 
     <h3>Motivation</h3>
     <p>
-      Optimal packing problems have an extensive history in Computational Geometry.
-      They are also relevant in many practical contexts.
-    </p>
-    <p>
-      Even the one-dimensional version of the problem (the Knapsack Problem)
-      is NP-hard; furthermore, some geometric variants have been shown to be
-      \(\exists R\)-complete [1], which most likely implies that they are not in the class NP.
-    </p>
-    <!--<p>
-    Details of the competition (such as benchmark instances, data formats,
-    specific constraints on feasible packings, such as integer coordinates,
-    as well as rules for submission and evaluation) will be announced in the
-    coming  weeks. Appropriate steps will be undertaken (e.g., by restricting
-    the  classes of feasible subsets) to ensure straightforward, automated
-    verification of solutions, but also ensure original algorithmic contributions.
-    </p>-->
-    <p>
-      The contributors with the most outstanding solutions will be recognized
-      at CG Week 2024 and invited to present their results, both at the event
-      and in the proceedings.
-    </p>
-    <p>
-      We are looking forward to your contributions and welcome questions
-      and comments!
-    </p>
-
-    <p style="clear: both;"></p>
-
-    <v-divider class="my-5"></v-divider>
-
-    <h3>Instances</h3>
-    <p>
-      A large number and variety of input polygonal regions P are
-      provided for the competition.
-      You can download them under <b>Download</b> above.
-      Make sure to download the actual challenge instances and not the example instances, as only those are evaluated.
+      Optimal coverage problems have an extensive history in
+      Computational Geometry. In fact, the well-known SoCG logo
+      shows that an optimal solution to the Minimum Cover by
+      rectangles may include (rotated) rectangles whose vertices
+      are not among those of the input polygon <MathFormula formula="P"/>, even in the case
+      that <MathFormula formula="P"/> is an orthogonal simple polygon. (See reference [1]
+      and
+      <a href="https://www.computational-geometry.org/logo.html">
+        https://www.computational-geometry.org/logo.html
+      </a>
+      .) It is also relevant in practical contexts, such as
+      surveillance and robot navigation.
+      The Minimum Cover by Convex Polygons problem is not only
+      NP-hard [2], but was recently shown to be <MathFormula formula="\exists\mathbb{R}"/>-complete [3],
+      which most likely implies that it is not in the class NP.
+      The contributors with the most outstanding solutions were
+      recognized at CG Week 2023 and invited to present their
+      results, both at the event and in the proceedings.
     </p>
 
     <v-divider class="my-5"></v-divider>
 
     <h3>References </h3>
     <p>
-      [1] M. Abrahamsen, T. Miltzow and N. Seiferth,
-      "Framework for ER-Completeness of Two-Dimensional Packing Problems,“
-      2020 IEEE 61st Annual Symposium on Foundations of Computer Science (FOCS), 2020,
-      pp. 1014-1021, doi: 10.1109/FOCS46700.2020.00098.
+      [1] Joseph O'Rourke. "The complexity of computing minimum convex covers for polygons," Proc. 20th Allerton Conf. Commun. Control Comput., 1982, pp. 75-84.
+    </p>
+    <p>
+      [2] Joseph C. Culberson and Robert A. Reckhow. "Covering polygons is hard". Journal of Algorithms 17.1 (1994), pp. 2--44.
+    </p>
+    <p>
+      [3] Mikkel Abrahamsen. Covering polygons is even harder. FOCS 2021: 375-386.
     </p>
 
   </v-container>

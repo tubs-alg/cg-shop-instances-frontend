@@ -9,11 +9,16 @@
       </div>
     </div>
 
-    <v-img
-        :src="thumbnail"
-        height="200px"
-        cover
-    ></v-img>
+    <router-link :to="{name: 'instance_detail', params: {
+          identifier: instance.uid,
+          problem: problem
+        }}">
+      <v-img
+          :src="thumbnail"
+          height="200px"
+          cover
+      ></v-img>
+    </router-link>
 
 
     <v-card-title>
@@ -47,7 +52,6 @@
 </template>
 
 <script>
-import UserService from '../services/user.service';
 import Problems from "@/data/problems";
 import urlJoin from 'url-join';
 
