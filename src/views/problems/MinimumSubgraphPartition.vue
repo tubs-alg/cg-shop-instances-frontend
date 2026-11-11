@@ -8,8 +8,8 @@ import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
 
-const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_plane_subgraph_partition/instances/vispecn2518/raw')
-const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_plane_subgraph_partition/instances/vispecn2518/solutions/63bd6d8b2515e0e1f65872db27dc3d37/raw')
+const exampleInstanceUrl = urlJoin(import.meta.env.VITE_API_URL, 'min_plane_subgraph_partition/instances/vispecn2518/raw')
+const exampleSolutionUrl = urlJoin(import.meta.env.VITE_API_URL, 'min_plane_subgraph_partition/instances/vispecn2518/solutions/63bd6d8b2515e0e1f65872db27dc3d37/raw')
 </script>
 
 <template>

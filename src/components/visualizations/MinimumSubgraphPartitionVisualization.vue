@@ -17,7 +17,7 @@
 
     <v-slider v-if="data && data.solution" v-model="highlight" min="0" :max="maxColor" step="1" label="Subgraph" thumb-label></v-slider>
 
-    <div v-if="rendered" class="text-center mt-1 text-sm-caption">
+    <div v-if="rendered" class="text-center mt-1 text-sm-body-small">
       Controls: Mouse wheel to zoom, Mouse click to pan
     </div>
   </v-container>
@@ -26,6 +26,7 @@
 
 
 <script>
+import circleTextureImg from "@/assets/circle_texture.png";
 import * as THREE from 'three';
 import {Line2, LineGeometry, LineMaterial, OrbitControls} from "three/addons";
 import axios from "axios";
@@ -155,7 +156,7 @@ export default {
       const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
       geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
-      let tex = new THREE.TextureLoader().load(require("@/assets/circle_texture.png"));
+      let tex = new THREE.TextureLoader().load(circleTextureImg);
 
       let material = new THREE.PointsMaterial({
         vertexColors: true,

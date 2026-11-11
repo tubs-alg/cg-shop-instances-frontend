@@ -5,12 +5,12 @@ import RangeSliderFilters from "@/components/instances/filters/RangeSliderFilter
 <template>
   <div class="search-area">
     <div class="gradient">
-      <v-skeleton-loader v-if="currentlyUpdatingFilters" :elevation="6" type="card" max-width="800" class="mx-auto"
+      <v-skeleton-loader v-if="currentlyUpdatingFilters" :elevation="5" type="card" max-width="800" class="mx-auto"
                          color="transparent"></v-skeleton-loader>
       <v-card v-if="!currentlyUpdatingFilters" elevation="0" max-width="800" class="mx-auto" color="transparent">
         <v-container>
 
-          <h1 class="text-h5 font-weight-light mb-5 d-flex align-center justify-space-between">
+          <h1 class="text-headline-small font-weight-light mb-5 d-flex align-center justify-space-between">
             <span>
               {{ problemName }} Instances
             </span>
@@ -61,7 +61,7 @@ import RangeSliderFilters from "@/components/instances/filters/RangeSliderFilter
         class="me-5 sort-select"
         rounded="rounded-xl"
     >
-      <template #selection="{ props, item }">
+      <template #selection="{ props, internalItem: item }">
         <v-list-item v-bind="props" density="compact">
           <template v-slot:title>
             <v-list-item-title>
@@ -72,7 +72,7 @@ import RangeSliderFilters from "@/components/instances/filters/RangeSliderFilter
         </v-list-item>
       </template>
 
-      <template v-slot:item="{ props, item }">
+      <template v-slot:item="{ props, internalItem: item }">
         <v-list-item v-bind="props" density="compact">
           <template v-slot:title>
             <v-list-item-title>
@@ -96,13 +96,13 @@ import RangeSliderFilters from "@/components/instances/filters/RangeSliderFilter
 
     <v-container v-if="!currentlyReloading">
       <v-infinite-scroll @load="loadScroll" empty-text="No more instances available" :mode="scrollMode">
-        <div class="d-flex flex-wrap">
+        <v-row>
           <v-col v-for="instance in instances" :key="instance.id" lg="3" md="4" cols="12">
             <v-slide-x-transition appear>
               <InstanceCard :instance="instance" v-show="true" :problem="problem"/>
             </v-slide-x-transition>
           </v-col>
-        </div>
+        </v-row>
         <template v-slot:load-more></template>
       </v-infinite-scroll>
     </v-container>

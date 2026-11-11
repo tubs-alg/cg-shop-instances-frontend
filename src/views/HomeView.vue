@@ -6,7 +6,7 @@
         <div class="hero-img">
 
           <div>
-            <h1 class="text-h2 mb-5">CG:SHOP Instances</h1>
+            <h1 class="text-display-large mb-5">CG:SHOP Instances</h1>
             <div>
               Welcome to the CG:SHOP Instances Collection, where scientific progress meets practicality. We curate a
               diverse
@@ -16,7 +16,7 @@
               collection.
             </div>
             <br>
-            <v-btn rounded variant="outlined">Learn More</v-btn>
+            <v-btn rounded variant="outlined" @click="scrollToProblems">Explore the Problems</v-btn>
           </div>
         </div>
       </v-container>
@@ -27,7 +27,7 @@
 
     <v-container>
 
-      <v-row justify="center" align="center">
+      <v-row class="justify-center align-center">
         <v-col lg="6">
           <h2>Computational Geometry</h2>
           <p class="text-justify">
@@ -54,7 +54,7 @@
           </p>
         </v-col>
         <v-col lg="6" class="d-none d-lg-block">
-          <v-img class="mx-auto" max-width="60%" :src="require('@/assets/mwt.png')"></v-img>
+          <v-img class="mx-auto" max-width="60%" :src="mwtImg"></v-img>
         </v-col>
       </v-row>
 
@@ -62,45 +62,45 @@
     </v-container>
   </div>
 
-  <div class="bg-off-color py-15">
+  <div id="problems" class="bg-off-color py-15">
 
     <v-container>
-      <h2 class="text-h3 font-weight-light mb-10 text-center">
+      <h2 class="text-display-medium font-weight-light mb-10 text-center">
         Our Problem Collection
       </h2>
-      <v-row justify="center">
+      <v-row class="justify-center">
         <v-col lg="4" md="6" cols="12">
           <ProblemCard link="/mpp" title="Maximum Polygon Packing"
-                       :img="require('@/assets/problems/mpp.png')"
+                       :img="mppImg"
                        description="Optimal packing a set of objects into a given container."/>
         </v-col>
         <v-col lg="4" md="6" cols="12">
           <ProblemCard link="/mcp" title="Minimum Convex Partition"
-                       :img="require('@/assets/problems/mcp.png')"
+                       :img="mcpImg"
                        description="Partition a point set into a smallest set of convex faces."/>
         </v-col>
 
         <v-col lg="4" md="6" cols="12">
           <ProblemCard link="/mapf" title="Multi Agent Path Finding"
-                       :img="require('@/assets/problems/mapf.png')"
+                       :img="mapfImg"
                        description="Compute a set of feasible trajectories a given set of robots and targets."/>
         </v-col>
 
         <v-col lg="4" md="6" cols="12">
           <ProblemCard link="/mcpc" title="Minimum Coverage by Convex Polygons"
-                       :img="require('@/assets/problems/mcpc.png')"
+                       :img="mcpcImg"
                        description="Compute a minimum coverage of a polygon by convex polygons."/>
         </v-col>
 
         <v-col lg="4" md="6" cols="12">
           <ProblemCard link="/mpsp" title="Minimum Partition into Plane Subgraphs"
-                       :img="require('@/assets/problems/mpsp.png')"
+                       :img="mpspImg"
                        description="Partition a graph into minimum plane subgraphs."/>
         </v-col>
 
         <v-col lg="4" md="6" cols="12">
           <ProblemCard link="/nonobt_triang" title="Minimum Non-Obtuse Triangulation"
-                       :img="require('@/assets/problems/nonobt_triang.png')"
+                       :img="nonobtTriangImg"
                        description="Find a feasible non-obtuse triangulation using a minimum number of Steiner points"/>
         </v-col>
       </v-row>
@@ -127,12 +127,18 @@
 
 </template>
 
-<script>
+<script setup>
 import ProblemCard from "@/components/home/ProblemCard.vue";
+import mwtImg from "@/assets/mwt.png";
+import mppImg from "@/assets/problems/mpp.png";
+import mcpImg from "@/assets/problems/mcp.png";
+import mapfImg from "@/assets/problems/mapf.png";
+import mcpcImg from "@/assets/problems/mcpc.png";
+import mpspImg from "@/assets/problems/mpsp.png";
+import nonobtTriangImg from "@/assets/problems/nonobt_triang.png";
 
-export default {
-  name: 'HomeView',
-  components: {ProblemCard}
+function scrollToProblems() {
+  document.getElementById('problems').scrollIntoView({behavior: 'smooth'})
 }
 </script>
 

@@ -11,7 +11,7 @@ class InstancesService {
     baseUrl() {
         for (let key in Problems) {
             if (Problems[key].id === this.problem) {
-                return process.env.VUE_APP_API_URL + Problems[key].endpoint
+                return import.meta.env.VITE_API_URL + Problems[key].endpoint
             }
         }
         throw new Error("Problem not found")

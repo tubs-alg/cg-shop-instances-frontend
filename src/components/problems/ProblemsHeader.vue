@@ -1,5 +1,5 @@
 <template>
-  <v-row class="mb-4" align="center" justify="center">
+  <v-row class="mb-4 align-center justify-center">
     <v-col md="3" cols="12" class="text-center">
       <router-link :to="searchUrl" class="me-4">
         <v-btn>
@@ -9,7 +9,7 @@
       </router-link>
     </v-col>
     <v-col md="9" cols="12" class="text-center text-md-start">
-      <h1 class="text-h3">{{ name }}</h1>
+      <h1 class="text-display-medium">{{ name }}</h1>
     </v-col>
   </v-row>
 </template>

@@ -6,8 +6,8 @@ import Problems from "@/data/problems";
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
-const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partition/instances/euro-night-0001000/raw')
-const exampleSolutionUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_partition/instances/euro-night-0001000/solutions/2be919d7be7914f6989deba46be4fcb2/raw')
+const exampleInstanceUrl = urlJoin(import.meta.env.VITE_API_URL, 'min_conv_partition/instances/euro-night-0001000/raw')
+const exampleSolutionUrl = urlJoin(import.meta.env.VITE_API_URL, 'min_conv_partition/instances/euro-night-0001000/solutions/2be919d7be7914f6989deba46be4fcb2/raw')
 </script>
 
 <template>

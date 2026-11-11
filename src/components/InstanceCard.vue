@@ -52,6 +52,7 @@
 </template>
 
 <script>
+import noPreviewImg from "@/assets/no_preview.png";
 import Problems from "@/data/problems";
 import urlJoin from 'url-join';
 
@@ -63,11 +64,11 @@ export default {
   },
   computed: {
     thumbnail() {
-      return this.instance.thumbnail ? urlJoin(process.env.VUE_APP_API_URL, this.instance.thumbnail) :
-          require('@/assets/no_preview.png')
+      return this.instance.thumbnail ? urlJoin(import.meta.env.VITE_API_URL, this.instance.thumbnail) :
+          noPreviewImg
     },
     download() {
-      return urlJoin(process.env.VUE_APP_API_URL, this.instance.path)
+      return urlJoin(import.meta.env.VITE_API_URL, this.instance.path)
     },
     instanceData() {
       let problem = Object.values(Problems).find((p) => p.id === this.problem);

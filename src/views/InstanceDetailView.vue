@@ -36,7 +36,7 @@
             <v-card-text>
               <v-row>
                 <v-col lg="6">
-                  <v-table class="text-caption">
+                  <v-table class="text-body-small">
                     <thead>
                     <tr>
                       <th class="font-weight-bold">Attribute</th>
@@ -56,7 +56,7 @@
                     </a>
                   </div>
                 </v-col>
-                <v-col lg="6" align-self="center">
+                <v-col lg="6" class="align-self-center">
                   <vue-image-zoomer :regular="buildUrl(instance.image)" click-zoom v-if="instance.image"/>
                   <div v-if="instance.image === null">
                     <v-alert type="info">
@@ -259,7 +259,7 @@ export default {
   },
   methods: {
     buildUrl(path) {
-      return urlJoin(process.env.VUE_APP_API_URL, path);
+      return urlJoin(import.meta.env.VITE_API_URL, path);
     },
     getBack() {
       this.$router.go(-1);

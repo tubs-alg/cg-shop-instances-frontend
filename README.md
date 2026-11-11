@@ -6,8 +6,8 @@ It runs in conjunction with a backend API server and is currently hosted at
 
 ## Project setup
 
-The frontend is a Vue.js project that uses the Vuetify Material Design framework. It is built with the Vue CLI and
-requires Node.js and npm to be installed on your system.
+The frontend is a Vue.js project that uses the Vuetify Material Design framework. It is built with Vite and
+requires Node.js (20.19+ or 22.12+) and npm to be installed on your system.
 
 To install the dependencies, run the following command in the project directory:
 
@@ -18,10 +18,12 @@ npm install
 After the dependencies have been installed, you can run the development server with the following command:
 
 ```
-npm run serve
+npm run dev
 ```
 
-The development server will be available at [http://localhost:8080/](http://localhost:8080/).
+The development server will be available at [http://localhost:8080/instances/](http://localhost:8080/instances/).
+
+The backend API URL is configured via the `VITE_API_URL` variable in `.env` (development) and `.env.production`.
 
 ## Deployment
 To build the project for deployment, run the following command:
@@ -30,7 +32,7 @@ npm run build
 ```
 
 This will create a `dist` directory containing the built project. The contents of this directory can be copied to a
-web server to deploy the project.
+web server to deploy the project. Use `npm run preview` to serve the built project locally.
 
 ### Docker
 

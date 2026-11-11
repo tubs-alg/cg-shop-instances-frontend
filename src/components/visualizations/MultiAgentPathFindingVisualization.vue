@@ -32,7 +32,7 @@
     ></v-slider>
 
 
-    <div v-if="rendered" class="text-center mt-1 text-sm-caption">
+    <div v-if="rendered" class="text-center mt-1 text-sm-body-small">
       Controls: Mouse wheel to zoom, Mouse click to pan, Slider to animate
     </div>
   </v-container>
@@ -41,12 +41,15 @@
 
 
 <script>
+import circleTextureImg from "@/assets/circle_texture.png";
+import circleTextureBorderImg from "@/assets/circle_texture_border.png";
+import tileImg from "@/assets/tile.png";
 import * as THREE from 'three';
 import {OrbitControls} from "three/addons";
 import {Vector3} from "three";
 import {throttle} from 'throttle-debounce';
 
-const colormap = require("colormap")
+import colormap from "colormap";
 
 import {
   hexToRgb,
@@ -230,11 +233,11 @@ export default {
       geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
       geometry.setAttribute('targetPosition', geometry.attributes.position.clone());
 
-      let robotTex = new THREE.TextureLoader().load(require("@/assets/circle_texture.png"));
+      let robotTex = new THREE.TextureLoader().load(circleTextureImg);
 
       if (opacity === 1) {
         // Show a border for the primary robot.
-        robotTex = new THREE.TextureLoader().load(require("@/assets/circle_texture_border.png"));
+        robotTex = new THREE.TextureLoader().load(circleTextureBorderImg);
       }
 
       let material = new THREE.PointsMaterial({
@@ -284,7 +287,7 @@ export default {
         colors.push(...color)
       })
 
-      let targetTexture = new THREE.TextureLoader().load(require("@/assets/tile.png"));
+      let targetTexture = new THREE.TextureLoader().load(tileImg);
 
       const targetsGeometry = new THREE.BufferGeometry().setFromPoints(vertices);
       targetsGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));

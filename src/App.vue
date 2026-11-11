@@ -1,4 +1,6 @@
 <script setup>
+import connectionsImg from "@/assets/connections.png";
+import dfgLogoEnglischBlauEnImg from "@/assets/dfg_logo_englisch_blau_en.jpg";
 import {computed} from 'vue'
 import {useRouter} from "vue-router";
 import Problems from "@/data/problems";
@@ -17,14 +19,14 @@ const showFooter = computed(() => {
   return router.currentRoute.value.name !== "instances" && router.currentRoute.value.name !== "instance_detail"
 });
 
-const apiUrl = process.env.VUE_APP_API_URL + 'docs'
+const apiUrl = import.meta.env.VITE_API_URL + 'docs'
 
 </script>
 
 <template>
   <v-layout>
     <v-app-bar :color="transparentAppBar? 'transparent': 'white'" :absolute="transparentAppBar" flat>
-      <v-img class="ms-5" :src="require('@/assets/connections.png')" max-width="32" v-if="showLogo"></v-img>
+      <v-img class="ms-5" :src="connectionsImg" max-width="32" v-if="showLogo"></v-img>
       <v-app-bar-title class="ms-5" v-if="showLogo">
         <router-link to="/"
                      :class="showLogo && transparentAppBar? 'text-white text-decoration-none' : 'text-black text-decoration-none'">
@@ -117,7 +119,7 @@ const apiUrl = process.env.VUE_APP_API_URL + 'docs'
       <v-footer class="d-block" v-if="showFooter">
 
         <v-divider class="py-3"></v-divider>
-        <v-row justify="space-between">
+        <v-row class="justify-space-between">
           <v-col cols="12" md="6">
             <small>
               This website has been developed by the Algorithms Division of the TU Braunschweig,
@@ -139,7 +141,7 @@ const apiUrl = process.env.VUE_APP_API_URL + 'docs'
           <v-col cols="12" md="6" class="d-flex justify-end">
             <div>
               <small>Supported by:</small>
-              <v-img :src="require('@/assets/dfg_logo_englisch_blau_en.jpg')" width="400"></v-img>
+              <v-img :src="dfgLogoEnglischBlauEnImg" width="400"></v-img>
             </div>
           </v-col>
         </v-row>
@@ -149,17 +151,19 @@ const apiUrl = process.env.VUE_APP_API_URL + 'docs'
 
 </template>
 
-<script>
-export default {
-  computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
-    }
-  }
-};
-</script>
-
 <style>
+/* Vuetify 4 no longer resets element margins; the layout relies on spacing utility classes instead. */
+@layer vuetify-core.reset {
+  ul, ol, figure, details, summary {
+    padding: 0;
+    margin: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+  }
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

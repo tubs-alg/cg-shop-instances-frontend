@@ -7,7 +7,7 @@ import Problems from "@/data/problems";
 import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
-const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_conv_poly_coverage/instances/ccheese142/raw')
+const exampleInstanceUrl = urlJoin(import.meta.env.VITE_API_URL, 'min_conv_poly_coverage/instances/ccheese142/raw')
 </script>
 
 <template>

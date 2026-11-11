@@ -28,11 +28,6 @@ export default {
   props: {
     instancePackage: Object
   },
-  computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
-    }
-  },
   data: () => {
     return {
       animate: false

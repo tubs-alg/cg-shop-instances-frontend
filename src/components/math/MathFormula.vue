@@ -1,17 +1,14 @@
 <script setup>
+import {computed} from "vue";
+import katex from "katex";
 
+const props = defineProps({
+  formula: String
+})
+
+const html = computed(() => katex.renderToString(props.formula ?? "", {throwOnError: false}))
 </script>
 
 <template>
-  <span v-katex:auto>\({{ formula }}\)</span>
+  <span v-html="html"></span>
 </template>
-
-<script>
-
-export default {
-  name: "MathFormula",
-  props: {
-    formula: String
-  }
-}
-</script>

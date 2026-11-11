@@ -6,7 +6,7 @@ import InstanceSchema from "@/components/instances/InstanceSchema.vue";
 import Problems from "@/data/problems";
 import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
-const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'max_poly_packing/instances/random_rcf2_x2871624_50/raw');
+const exampleInstanceUrl = urlJoin(import.meta.env.VITE_API_URL, 'max_poly_packing/instances/random_rcf2_x2871624_50/raw');
 const searchUrl = {
   name: 'instances',
   params: {

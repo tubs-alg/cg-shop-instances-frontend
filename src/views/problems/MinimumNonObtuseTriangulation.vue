@@ -8,7 +8,7 @@ import MinimumNonObtuseTriangulationVisualization
 import ProblemsHeader from "@/components/problems/ProblemsHeader.vue";
 
 
-const exampleInstanceUrl = urlJoin(process.env.VUE_APP_API_URL, 'min_nonobt_triang/instances/cgshop2025_examples_simple-polygon-exterior-20_100_741418808487093555/raw')
+const exampleInstanceUrl = urlJoin(import.meta.env.VITE_API_URL, 'min_nonobt_triang/instances/cgshop2025_examples_simple-polygon-exterior-20_100_741418808487093555/raw')
 
 </script>
 

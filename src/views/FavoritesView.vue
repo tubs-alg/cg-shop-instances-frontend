@@ -4,13 +4,13 @@
     <div class="text-center">
       <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
     </div>
-    <div class="d-flex flex-wrap" v-if="!loading">
+    <v-row v-if="!loading">
       <v-col v-for="instance in instances" :key="instance.id">
         <v-slide-x-transition appear>
           <InstanceCard :instance="instance" v-show="true" problem="mpp" :filters="[]"></InstanceCard>
         </v-slide-x-transition>
       </v-col>
-    </div>
+    </v-row>
   </v-container>
 </template>
 

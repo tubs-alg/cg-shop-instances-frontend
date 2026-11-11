@@ -12,7 +12,7 @@
     </div>
 
 
-    <div v-if="rendered" class="text-center mt-1 text-sm-caption">
+    <div v-if="rendered" class="text-center mt-1 text-sm-body-small">
       Controls: Mouse wheel to zoom, Mouse click to pan
     </div>
   </v-container>
