@@ -13,7 +13,7 @@ const exampleInstanceUrl = urlJoin(import.meta.env.VITE_API_URL, 'min_nonobt_tri
 </script>
 
 <template>
-  <v-container>
+  <v-container class="prose py-8">
 
     <ProblemsHeader :problem="Problems.NonObtuseTriangulations"/>
 

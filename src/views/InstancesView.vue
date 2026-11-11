@@ -1,294 +1,279 @@
 <script setup>
-import Problems from "@/data/problems";
+import {computed, onMounted, ref, watch} from "vue";
+import {useRoute} from "vue-router";
+import {debounce} from "throttle-debounce";
+import {findProblem} from "@/data/problems";
+import InstancesService from "@/services/instances.service";
+import InstanceCard from "@/components/InstanceCard.vue";
 import RangeSliderFilters from "@/components/instances/filters/RangeSliderFilter.vue";
+
+const PAGE_SIZE = 12;
+
+const route = useRoute();
+const problem = route.params.problem;
+const problemConfig = findProblem(problem);
+const service = problemConfig ? new InstancesService(problem) : null;
+
+const problemData = ref(null);
+const loadingProblem = ref(true);
+const loadError = ref(false);
+
+const search = ref("");
+const filters = ref({});
+const sort = ref("uid");
+
+const instances = ref([]);
+const total = ref(0);
+const reloading = ref(true);
+const scrollMode = ref("intersect");
+// Increased on every reload, so responses of outdated requests can be dropped.
+let requestId = 0;
+
+const sortOptions = computed(() => {
+  if (problemData.value === null) {
+    return [];
+  }
+
+  return problemData.value["instance_sort_fields"].flatMap((field) => {
+    const label = problemConfig.labels[field] ?? field;
+    return [
+      {title: label, value: field, prependIcon: 'mdi-sort-ascending'},
+      {title: label, value: "-" + field, prependIcon: 'mdi-sort-descending'},
+    ];
+  });
+});
+
+function requestInstances(offset, includeCount = false) {
+  return service.getInstances(search.value, filters.value, {
+    limit: PAGE_SIZE,
+    offset: offset,
+    sort: sort.value,
+    add_total_count: includeCount
+  });
+}
+
+function reload() {
+  const id = ++requestId;
+  scrollMode.value = "manual";
+  reloading.value = true;
+  loadError.value = false;
+
+  requestInstances(0, true).then((response) => {
+    if (id !== requestId) {
+      return;
+    }
+    total.value = Number(response.headers["x-total-count"] ?? response.data.length);
+    instances.value = response.data;
+  }).catch(() => {
+    if (id === requestId) {
+      instances.value = [];
+      loadError.value = true;
+    }
+  }).finally(() => {
+    if (id === requestId) {
+      reloading.value = false;
+      scrollMode.value = "intersect";
+    }
+  });
+}
+
+const debouncedReload = debounce(400, reload);
+
+function loadMore({done}) {
+  const id = requestId;
+  requestInstances(instances.value.length).then((response) => {
+    if (id !== requestId) {
+      return done('ok');
+    }
+    instances.value.push(...response.data);
+    done(instances.value.length >= total.value || response.data.length === 0 ? 'empty' : 'ok');
+  }).catch(() => done('error'));
+}
+
+let filtersInitialized = false;
+
+function onFiltersChanged(values) {
+  filters.value = values;
+  // The first call reports the initial filter values: search right away instead of waiting for the debounce.
+  if (filtersInitialized) {
+    debouncedReload();
+  } else {
+    filtersInitialized = true;
+    reload();
+  }
+}
+
+function resetSearch() {
+  search.value = "";
+}
+
+watch(search, () => debouncedReload());
+watch(sort, () => reload());
+
+function loadProblem() {
+  loadingProblem.value = true;
+  loadError.value = false;
+  service.getProblem().then((response) => {
+    problemData.value = response.data;
+    loadingProblem.value = false;
+    // The filter component reports its initial values, which triggers the first search.
+    if (response.data["instance_range_query_fields"].length === 0) {
+      reload();
+    }
+  }).catch(() => {
+    loadError.value = true;
+    reloading.value = false;
+  });
+}
+
+onMounted(() => {
+  if (service) {
+    loadProblem();
+  }
+});
 </script>
+
 <template>
-  <div class="search-area">
-    <div class="gradient">
-      <v-skeleton-loader v-if="currentlyUpdatingFilters" :elevation="5" type="card" max-width="800" class="mx-auto"
-                         color="transparent"></v-skeleton-loader>
-      <v-card v-if="!currentlyUpdatingFilters" elevation="0" max-width="800" class="mx-auto" color="transparent">
-        <v-container>
+  <section class="search-hero bg-hero">
+    <v-container class="search-container">
+      <template v-if="!problemConfig">
+        <h1 class="text-headline-large font-weight-bold mb-4">Unknown problem</h1>
+        <v-btn to="/" variant="outlined" color="white" prepend-icon="mdi-home">Back to the start page</v-btn>
+      </template>
 
-          <h1 class="text-headline-small font-weight-light mb-5 d-flex align-center justify-space-between">
-            <span>
-              {{ problemName }} Instances
-            </span>
-            <router-link :to="'/' + problem" class="text-white">
-              <v-btn variant="outlined" size="small">Problem Definition</v-btn>
-            </router-link>
+      <template v-else>
+        <div class="d-flex flex-wrap align-center justify-space-between ga-3 mb-6">
+          <div>
+            <div class="hero-eyebrow">CG:SHOP {{ problemConfig.year }} · Instances</div>
+            <h1 class="text-headline-large font-weight-bold">{{ problemConfig.name }}</h1>
+          </div>
+          <v-btn :to="'/' + problem" variant="outlined" color="white" prepend-icon="mdi-book-open-variant-outline">
+            Problem definition
+          </v-btn>
+        </div>
 
-          </h1>
-
-          <v-combobox
+        <v-card theme="dark" class="filter-card pa-4 pa-md-6" variant="flat">
+          <v-text-field
               v-model="search"
-              v-model:search="search"
-              label="Search for instance"
-              variant="outlined"
-          ></v-combobox>
+              placeholder="Search instances by name"
+              prepend-inner-icon="mdi-magnify"
+              clearable
+              hide-details
+              :loading="reloading && !loadingProblem"
+              @click:clear="resetSearch"
+          ></v-text-field>
 
-          <RangeSliderFilters :fields="problemData['instance_range_query_fields']"
-                              :problemConfig="problemConfig"
-                              ref="filterComponent"
-                              @change="filtersChanged"/>
+          <v-skeleton-loader v-if="loadingProblem && !loadError" type="text" color="transparent"
+                             class="mt-4"></v-skeleton-loader>
+          <RangeSliderFilters v-else-if="problemData"
+                              :fields="problemData['instance_range_query_fields']"
+                              :labels="problemConfig.labels"
+                              @change="onFiltersChanged"/>
+        </v-card>
+      </template>
+    </v-container>
+  </section>
 
-          <v-expand-transition>
-            <div class="text-end" v-if="showReload">
-              <v-btn fab @click="reload" prepend-icon="mdi-reload">Refresh</v-btn>
-            </div>
-          </v-expand-transition>
-
-        </v-container>
-      </v-card>
+  <v-container v-if="problemConfig" class="results-container">
+    <div class="d-flex flex-wrap align-center justify-space-between ga-3 mb-6">
+      <div class="text-muted">
+        <template v-if="reloading">Searching…</template>
+        <template v-else>
+          <strong class="text-high-emphasis">{{ total.toLocaleString() }}</strong>
+          {{ total === 1 ? 'instance' : 'instances' }} found
+        </template>
+      </div>
+      <v-select
+          v-model="sort"
+          :items="sortOptions"
+          item-props
+          label="Sort by"
+          density="compact"
+          hide-details
+          class="sort-select"
+      >
+        <template #selection="{ internalItem }">
+          <v-icon :icon="internalItem.raw.prependIcon" size="small" class="me-1"></v-icon>
+          {{ internalItem.title }}
+        </template>
+      </v-select>
     </div>
 
-  </div>
-
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none" height="100px" width="100%" >
-    <path fill="#2e506c" fill-opacity="1" d="M0,192L48,197.3C96,203,192,213,288,186.7C384,160,480,96,576,101.3C672,107,768,181,864,208C960,235,1056,213,1152,202.7C1248,192,1344,192,1392,192L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
-
-  </svg>
-
-  <v-container class="d-flex justify-space-between align-center">
-    <span class="text-grey">{{ n }} instances found</span>
-    <v-select
-        single-line
-        max-width="180"
-        density="compact"
-        v-model="sort"
-        :items="sortOptions"
-        label="Sort by"
-        class="me-5 sort-select"
-        rounded="rounded-xl"
-    >
-      <template #selection="{ props, internalItem: item }">
-        <v-list-item v-bind="props" density="compact">
-          <template v-slot:title>
-            <v-list-item-title>
-              <v-icon :icon="sortOptionIcon(item)" size="x-small"></v-icon>
-              {{ sortOptionTitle(item) }}
-            </v-list-item-title>
-          </template>
-        </v-list-item>
+    <v-alert v-if="loadError" type="error" variant="tonal" class="mb-6"
+             title="Could not load instances"
+             text="The instance server could not be reached. Please try again in a moment.">
+      <template #append>
+        <v-btn variant="text" @click="problemData ? reload() : loadProblem()">Retry</v-btn>
       </template>
+    </v-alert>
 
-      <template v-slot:item="{ props, internalItem: item }">
-        <v-list-item v-bind="props" density="compact">
-          <template v-slot:title>
-            <v-list-item-title>
-              <v-icon :icon="sortOptionIcon(item)" size="x-small"></v-icon>
-              {{ sortOptionTitle(item) }}
-            </v-list-item-title>
-          </template>
-        </v-list-item>
+    <v-row v-else-if="reloading">
+      <v-col v-for="i in 8" :key="i" xl="3" lg="3" md="4" sm="6" cols="12">
+        <v-skeleton-loader type="image, heading, text, actions" class="rounded-lg" border></v-skeleton-loader>
+      </v-col>
+    </v-row>
+
+    <v-empty-state v-else-if="instances.length === 0"
+                   icon="mdi-file-search-outline"
+                   title="No instances match your search"
+                   text="Try a different name or widen the filter ranges.">
+      <template #actions v-if="search">
+        <v-btn variant="tonal" color="primary" @click="resetSearch">Clear search</v-btn>
       </template>
+    </v-empty-state>
 
-    </v-select>
+    <v-infinite-scroll v-else @load="loadMore" :mode="scrollMode" class="overflow-visible">
+      <v-row>
+        <v-col v-for="instance in instances" :key="instance.id" xl="3" lg="3" md="4" sm="6" cols="12">
+          <v-fade-transition appear>
+            <InstanceCard :instance="instance" :problem="problemConfig"/>
+          </v-fade-transition>
+        </v-col>
+      </v-row>
+      <template #empty>
+        <div class="text-muted text-body-small py-4">All {{ total.toLocaleString() }} instances loaded</div>
+      </template>
+      <template #error="{ props }">
+        <v-btn v-bind="props" variant="tonal" color="error">Loading failed, retry</v-btn>
+      </template>
+    </v-infinite-scroll>
   </v-container>
-
-  <v-card elevation="0">
-    <v-fade-transition>
-      <v-btn fab icon="mdi-reload" position="absolute"
-             v-if="currentlyReloading"
-             class="rotate"
-             :style="{left: '50%', transform:'translate(-50%, 50%)', 'z-index': 1000}"></v-btn>
-    </v-fade-transition>
-
-    <v-container v-if="!currentlyReloading">
-      <v-infinite-scroll @load="loadScroll" empty-text="No more instances available" :mode="scrollMode">
-        <v-row>
-          <v-col v-for="instance in instances" :key="instance.id" lg="3" md="4" cols="12">
-            <v-slide-x-transition appear>
-              <InstanceCard :instance="instance" v-show="true" :problem="problem"/>
-            </v-slide-x-transition>
-          </v-col>
-        </v-row>
-        <template v-slot:load-more></template>
-      </v-infinite-scroll>
-    </v-container>
-  </v-card>
-
 </template>
 
-<script>
-import InstanceCard from "@/components/InstanceCard.vue";
-import InstancesService from "@/services/instances.service";
-
-export default {
-  name: 'InstancesView',
-  components: {
-    InstanceCard
-  },
-  watch: {
-    search() {
-      this.showReload = true;
-    },
-    sort() {
-      this.reload()
-    },
-    problem() {
-      this.updateFilters();
-    }
-  },
-  computed: {
-    service() {
-      return new InstancesService(this.problem)
-    },
-    problemConfig() {
-      return Object.values(Problems).find((p) => {
-        return p.id === this.problem;
-      });
-    },
-    problemName() {
-      if (this.problemConfig) {
-        return this.problemConfig.name;
-      }
-
-      return "Unknown problem"
-    },
-    sortOptions() {
-      let options = [];
-
-      if (this.problemData === null) {
-        return options;
-      }
-
-      this.problemData["instance_sort_fields"].forEach((field) => {
-        options.push("-" + field);
-        options.push(field);
-      })
-
-      return options
-    }
-  },
-  data: function () {
-    return {
-      search: "",
-      problem: this.$route.params.problem,
-      problemData: null,
-      instances: [],
-      sort: "uid",
-      n: 0,
-      limit: 10,
-      offset: 0,
-      scrollMode: "intersect",
-      showReload: false,
-      currentlyReloading: true,
-      currentlyUpdatingFilters: true,
-    }
-  },
-  mounted() {
-    this.updateFilters();
-  },
-  methods: {
-    sortOptionTitle(option) {
-      let value = option.value;
-
-      if(value.startsWith('-')) {
-        value = value.substring(1);
-      }
-
-      if(this.problemConfig.labels[value] !== undefined) {
-        return this.problemConfig.labels[value];
-      }
-
-      return value;
-    },
-    sortOptionIcon(option) {
-      // if option starts with - show an icon
-      if (option.value.startsWith('-')) {
-        return 'mdi-sort-descending';
-      }
-      return 'mdi-sort-ascending';
-    },
-    filtersChanged() {
-      this.showReload = true;
-    },
-    updateFilters() {
-      this.currentlyUpdatingFilters = true;
-      this.service.getProblem().then((response) => {
-        this.problemData = response.data;
-        this.currentlyUpdatingFilters = false;
-
-        this.reload();
-      })
-    },
-    getFilterValues() {
-      return this.$refs.filterComponent.filter();
-    },
-    requestInstances(includeCount = false) {
-      let component = this;
-      return this.service.getInstances(component.search,
-          this.getFilterValues(), {
-            limit: component.limit,
-            offset: component.offset,
-            sort: component.sort,
-            add_total_count: includeCount
-          });
-    },
-    reload() {
-      let component = this;
-      component.scrollMode = "manual"
-      component.instances = []
-      component.offset = 0;
-      component.showReload = false;
-      component.currentlyReloading = true
-
-      setTimeout(() => {
-        this.requestInstances(true).then(function (response) {
-          component.n = response.headers["x-total-count"]
-          component.instances = response.data
-          component.scrollMode = "intersect"
-          component.currentlyReloading = false;
-          component.offset += response.data.length
-        }).catch(function () {
-          component.scrollMode = "intersect"
-          component.currentlyReloading = false;
-        });
-      }, 300);
-    },
-    async loadScroll({done}) {
-      let component = this;
-      component.loading = true;
-      this.requestInstances().then(function (response) {
-        component.instances.push(...response.data);
-        component.offset += response.data.length;
-
-        if (response.data.length > 0) {
-          done('ok');
-        } else {
-          done('empty');
-        }
-      }).catch(function () {
-        done('empty');
-      });
-
-    },
-  }
-}
-</script>
-
 <style scoped>
-@keyframes rotate {
-  100% {
-    transform: rotate(1turn);
-  }
-}
-
-.rotate :deep(.v-btn__content) {
-  animation: rotate 1s linear infinite;
-}
-
-.search-area {
+.search-hero {
   margin-top: -64px;
-  background-color: #2e506c;
-  color: white;
-
-}
-
-.search-area .gradient {
-  background-size: cover !important;
   padding-top: 64px;
 }
 
+.search-container {
+  max-width: 960px;
+  padding-top: 40px;
+  padding-bottom: 56px;
+}
+
+.hero-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 0.25rem;
+}
+
+.filter-card {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.results-container {
+  padding-top: 32px;
+  padding-bottom: 48px;
+}
+
+.sort-select {
+  max-width: 240px;
+  min-width: 200px;
+}
 </style>
