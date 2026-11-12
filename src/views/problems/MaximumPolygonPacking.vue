@@ -16,7 +16,7 @@ const searchUrl = {
 </script>
 
 <template>
-  <v-container>
+  <v-container class="prose py-8">
 
     <ProblemsHeader :problem="Problems.MaximumPolygonPacking"/>
 

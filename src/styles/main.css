@@ -1,0 +1,85 @@
+/* Vuetify 4 no longer resets element margins; the layout relies on spacing utility classes instead. */
+@layer vuetify-core.reset {
+  ul, ol, figure, details, summary {
+    padding: 0;
+    margin: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+  }
+}
+
+:root {
+  --cg-font: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --cg-text: #22313f;
+  --cg-text-muted: #5b6b7a;
+  --cg-hero-gradient: linear-gradient(135deg, #1d3446 0%, #2e506c 55%, #3a6787 100%);
+  /* Picked up by all Vuetify components and typography classes. */
+  --v-font-body: var(--cg-font);
+  --v-font-heading: var(--cg-font);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--cg-font);
+}
+
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--cg-text);
+}
+
+.text-muted {
+  color: var(--cg-text-muted);
+}
+
+.bg-hero {
+  background: var(--cg-hero-gradient);
+  color: white;
+}
+
+/* Long-form text, e.g. the problem definition pages. */
+.prose {
+  line-height: 1.7;
+}
+
+.prose > p,
+.prose > .v-expansion-panels {
+  max-width: 78ch;
+}
+
+.prose p + p {
+  margin-top: 0.75em;
+}
+
+.prose h3 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 2rem 0 0.75rem;
+  color: rgb(var(--v-theme-primary));
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+
+.prose a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
+.prose hr.v-divider {
+  display: none;
+}

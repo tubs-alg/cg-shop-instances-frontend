@@ -1,113 +1,96 @@
-<template>
-  <v-card class="me-3 mb-3">
-    <div class="position-relative">
-      <div class="position-absolute chips">
-        <v-chip v-for="(chip, idx) in chips" :key="idx" variant="flat" color="white" size="x-small" class="me-1 mt-1">
-          <v-icon start icon="mdi-label"></v-icon>
-          {{ chip }}
-        </v-chip>
-      </div>
-    </div>
+<script setup>
+import {computed} from "vue";
+import urlJoin from 'url-join';
+import noPreviewImg from "@/assets/no_preview.png";
 
-    <router-link :to="{name: 'instance_detail', params: {
-          identifier: instance.uid,
-          problem: problem
-        }}">
-      <v-img
-          :src="thumbnail"
-          height="200px"
-          cover
-      ></v-img>
+const props = defineProps({
+  instance: {type: Object, required: true},
+  // Problem configuration from `@/data/problems`.
+  problem: {type: Object, required: true}
+});
+
+const detailLink = computed(() => ({
+  name: 'instance_detail',
+  params: {identifier: props.instance.uid, problem: props.problem.id}
+}));
+
+const thumbnail = computed(() => props.instance.thumbnail
+    ? urlJoin(import.meta.env.VITE_API_URL, props.instance.thumbnail)
+    : noPreviewImg);
+
+const download = computed(() => urlJoin(import.meta.env.VITE_API_URL, props.instance.path));
+
+const attributes = computed(() => props.problem.instanceCardAttributes.map((field) => ({
+  label: props.problem.labels[field],
+  value: props.instance[field]
+})));
+</script>
+
+<template>
+  <v-card class="instance-card h-100 d-flex flex-column" variant="flat">
+    <router-link :to="detailLink" class="thumbnail">
+      <v-img :src="thumbnail" height="190" cover :alt="'Preview of ' + instance.uid">
+        <template #placeholder>
+          <div class="d-flex align-center justify-center fill-height">
+            <v-progress-circular indeterminate size="24" color="grey-lighten-1"></v-progress-circular>
+          </div>
+        </template>
+      </v-img>
+      <v-chip v-if="instance.raw" class="live-chip" size="x-small" variant="flat" color="primary"
+              prepend-icon="mdi-gesture-tap">
+        Interactive
+      </v-chip>
     </router-link>
 
+    <v-card-item class="pb-1">
+      <v-card-title class="instance-title" :title="instance.uid">
+        <router-link :to="detailLink" class="text-decoration-none text-high-emphasis">{{ instance.uid }}</router-link>
+      </v-card-title>
+    </v-card-item>
 
-    <v-card-title>
-      {{ instance.uid }}
-    </v-card-title>
-
-    <v-card-subtitle>
-      <div v-for="(item, i) in instanceData" :key="i">
-        {{ item.label }}: {{ item.value }}
+    <v-card-text class="flex-grow-1 pt-1">
+      <div class="d-flex flex-wrap ga-2">
+        <v-chip v-for="attribute in attributes" :key="attribute.label" size="small" variant="tonal">
+          <strong class="me-1">{{ attribute.value?.toLocaleString() }}</strong> {{ attribute.label }}
+        </v-chip>
       </div>
-    </v-card-subtitle>
+    </v-card-text>
 
-    <v-card-actions>
-      <router-link :to="{name: 'instance_detail', params: {
-          identifier: instance.uid,
-          problem: problem
-        }}">
-        <v-btn icon="mdi-eye"></v-btn>
-      </router-link>
-
+    <v-card-actions class="px-3">
+      <v-btn :to="detailLink" variant="text" color="primary" prepend-icon="mdi-eye-outline">Details</v-btn>
       <v-spacer></v-spacer>
-
-      <a :href="download" download target="_blank" class="text-black">
-        <v-btn icon="mdi-download">
-        </v-btn>
-      </a>
-
+      <v-btn :href="download" download target="_blank" icon="mdi-download" variant="text" size="small"
+             :aria-label="'Download ' + instance.uid" v-tooltip:top="'Download instance'"></v-btn>
     </v-card-actions>
-
   </v-card>
 </template>
 
-<script>
-import noPreviewImg from "@/assets/no_preview.png";
-import Problems from "@/data/problems";
-import urlJoin from 'url-join';
-
-export default {
-  name: "InstanceCard",
-  props: {
-    instance: Object,
-    problem: String
-  },
-  computed: {
-    thumbnail() {
-      return this.instance.thumbnail ? urlJoin(import.meta.env.VITE_API_URL, this.instance.thumbnail) :
-          noPreviewImg
-    },
-    download() {
-      return urlJoin(import.meta.env.VITE_API_URL, this.instance.path)
-    },
-    instanceData() {
-      let problem = Object.values(Problems).find((p) => p.id === this.problem);
-
-      if (problem) {
-        return problem.instanceCardAttributes.map((field) => {
-          return {
-            label: problem.labels[field],
-            value: this.instance[field]
-          }
-        })
-      }
-
-      return []
-    }
-  },
-  data: (obj) => {
-    let chips = []
-
-    if (obj.instance.raw) {
-      chips.push("live visualization")
-    }
-
-    return {
-      chips: chips,
-      animate: false
-    }
-  },
-}
-</script>
-
 <style scoped>
-.chips {
-  z-index: 1;
-  background: linear-gradient(180deg, rgba(30, 30, 30, 1) 0%, rgba(30, 30, 30, .7) 40%, rgba(30, 30, 30, 0) 100%);
-  width: 100%;
-  display: flex;
-  justify-content: end;
-  flex-wrap: wrap;
-  padding-bottom: 30px
+.instance-card {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.instance-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(29, 52, 70, 0.12);
+}
+
+.thumbnail {
+  position: relative;
+  display: block;
+  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.live-chip {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.instance-title {
+  font-size: 1rem;
+  font-weight: 600;
 }
 </style>
